@@ -1,25 +1,67 @@
 <!doctype html>
-<html lang="de"><head><base target="_top"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stempeluhr Admin</title>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="theme-color" content="#11161C"><title>Stempeluhr Admin</title>
 <style>
-:root{--bg:#0f1218;--card:#1a1f29;--line:#2a303c;--tx:#eee;--mut:#97a2ae;--sig:#FFC400;--bad:#ff6b61;--ok:#8fd18f}
-*{box-sizing:border-box}body{font:15px system-ui,sans-serif;background:var(--bg);color:var(--tx);margin:0;padding:16px;max-width:980px;margin:auto}
-h2{margin:6px 0 12px}h3{margin:0 0 10px}small,.mut{color:var(--mut)}a{color:#6ea8ff;cursor:pointer}
-.card{background:var(--card);border-radius:14px;padding:16px;margin:0 0 14px}
-table{width:100%;border-collapse:collapse;margin:8px 0}td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mut);font-weight:600;font-size:13px}
-input,select,button,textarea{font:inherit;padding:9px;border-radius:8px;border:1px solid #333;background:var(--bg);color:var(--tx)}
-button{background:#2f7bff;border:0;font-weight:700;cursor:pointer;color:#fff}button.g{background:#555}button.y{background:var(--sig);color:#111}
-.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.tabs button{background:var(--card);color:var(--tx)}.tabs button.on{background:var(--sig);color:#111}
-.msg{background:#3a2a10;border-radius:8px;padding:9px 12px;margin:0 0 12px}.err{background:#4a1d1d}.live{color:var(--sig)}.off{opacity:.5}.wrap{overflow:auto}
-#login{max-width:320px;margin:12vh auto}#login input,#login button{width:100%;margin-top:10px}
+:root{--bg:#EEF1F5;--card:#fff;--ink:#11161C;--mut:#6B7686;--line:#E1E6EC;--sig:#FFC400;--sigink:#11161C;--blue:#2F6BFF;--ok:#1E9E5A;--bad:#D1352B;--warn:#B77900;--chip:#EEF1F5;--shadow:0 1px 2px rgba(17,22,28,.06),0 6px 18px rgba(17,22,28,.05);--r:16px}
+:root[data-theme=dark]{--bg:#0C1015;--card:#161B23;--ink:#EDF0F4;--mut:#93A0B0;--line:#262D38;--chip:#212833;--shadow:0 1px 2px rgba(0,0,0,.4);--ok:#4CC38A;--bad:#FF6B61;--warn:#FFC400;--blue:#6EA8FF}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0C1015;--card:#161B23;--ink:#EDF0F4;--mut:#93A0B0;--line:#262D38;--chip:#212833;--shadow:0 1px 2px rgba(0,0,0,.4);--ok:#4CC38A;--bad:#FF6B61;--warn:#FFC400;--blue:#6EA8FF}}
+[hidden]{display:none!important}*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{margin:0;letter-spacing:-.01em}h3{font-size:16px}small,.mut{color:var(--mut)}a{color:var(--blue);cursor:pointer;text-decoration:none}a:hover{text-decoration:underline}
+button,input,select,textarea{font:inherit;color:var(--ink)}
+input,select,textarea{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{border-color:var(--sig);box-shadow:0 0 0 3px rgba(255,196,0,.28)}
+button{border:0;border-radius:10px;padding:10px 14px;font-weight:650;cursor:pointer;background:var(--ink);color:var(--bg);transition:transform .08s,opacity .15s}
+button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:default}
+button.pri{background:var(--sig);color:var(--sigink)}button.ghost{background:var(--chip);color:var(--ink)}button.danger{background:var(--bad);color:#fff}button.sm{padding:7px 10px;font-size:13px;border-radius:8px}
+.top{position:sticky;top:0;z-index:20;background:#11161C;color:#fff;display:flex;align-items:center;gap:14px;padding:10px 18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.01em}.brand i{width:14px;height:14px;border-radius:50%;background:var(--sig);box-shadow:0 0 0 4px rgba(255,196,0,.25)}.brand span{color:var(--sig)}
+.tabs{display:flex;gap:2px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tabs button{background:transparent;color:#C9D1DB;padding:8px 11px;border-radius:9px;white-space:nowrap}.tabs button.on{background:var(--sig);color:#11161C}.tabs button:not(.on):hover{background:rgba(255,255,255,.1)}
+.right{display:flex;align-items:center;gap:8px}.top .chip{background:rgba(255,255,255,.12);color:#fff}.top button.ghost{background:rgba(255,255,255,.12);color:#fff}
+main{max-width:1080px;margin:0 auto;padding:18px 16px 80px}
+.card{background:var(--card);border-radius:var(--r);padding:18px;margin:0 0 16px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.card>h3{margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.card>h3 small{font-weight:500;font-size:13px}
+.head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 14px}.head h2{font-size:22px;flex:1;min-width:140px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.grow{flex:1;min-width:150px}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--chip);border-radius:99px;padding:3px 10px;font-size:12.5px;font-weight:650;white-space:nowrap}
+.chip.ok{background:rgba(30,158,90,.14);color:var(--ok)}.chip.bad{background:rgba(209,53,43,.14);color:var(--bad)}.chip.warn{background:rgba(255,196,0,.22);color:var(--warn)}.chip.dev{background:#11161C;color:var(--sig)}.chip.adm{background:rgba(47,107,255,.14);color:var(--blue)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow)}.kpi small{display:block;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}.kpi b{display:block;font-size:28px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.kpi.sig{background:var(--sig);border-color:var(--sig);color:#11161C}.kpi.sig small{color:#4a3d00}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.emp{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s,border-color .15s}.emp:hover{transform:translateY(-2px);border-color:var(--sig)}
+.emp.live{border-color:var(--sig);box-shadow:0 0 0 2px rgba(255,196,0,.35)}
+.emp-h{display:flex;gap:10px;align-items:center;margin-bottom:10px}.emp-h b{display:block;line-height:1.2}
+.av{width:38px;height:38px;border-radius:50%;background:#11161C;border:1px solid var(--line);color:var(--sig);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.st{font-size:13px;color:var(--mut);margin-bottom:10px;display:flex;align-items:center;gap:7px;min-height:20px}.st.on{color:var(--ink);font-weight:650}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--mut);flex:none}.st.on .pulse{background:var(--sig);box-shadow:0 0 0 0 rgba(255,196,0,.7);animation:p 1.6s infinite}@keyframes p{70%{box-shadow:0 0 0 8px rgba(255,196,0,0)}100%{box-shadow:0 0 0 0 rgba(255,196,0,0)}}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;border-top:1px solid var(--line);padding-top:10px}.nums small{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}.nums b{font-size:17px;font-variant-numeric:tabular-nums}
+.foot{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:12.5px;color:var(--mut)}
+.urow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)}.urow:last-child{border:0}.urow.off{opacity:.55}.urow .who{flex:1;min-width:180px}.urow .who b{display:block}
+.tw{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--chip);color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0}tr:last-child td{border-bottom:0}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}td:first-child{white-space:nowrap}tfoot td{font-weight:800;background:var(--chip)}
+.seg{display:inline-flex;background:var(--chip);border-radius:11px;padding:3px}.seg button{background:transparent;color:var(--mut);padding:7px 14px}.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.mnav{display:inline-flex;align-items:center;gap:4px;background:var(--chip);border-radius:11px;padding:3px}.mnav button{background:transparent;color:var(--ink);padding:6px 11px}.mnav b{min-width:96px;text-align:center;font-size:14px}
+.empty{text-align:center;color:var(--mut);padding:30px 10px}.empty big{display:block;font-size:30px;margin-bottom:6px}
+.sk{border-radius:12px;background:linear-gradient(90deg,var(--chip) 25%,var(--line) 50%,var(--chip) 75%);background-size:200% 100%;animation:sh 1.2s infinite;height:96px;margin-bottom:12px}@keyframes sh{to{background-position:-200% 0}}
+#toasts{position:fixed;left:0;right:0;bottom:18px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:50;pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:12px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:in .2s;max-width:92vw}.toast.bad{background:var(--bad);color:#fff}@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.modal{position:fixed;inset:0;background:rgba(10,14,20,.55);display:grid;place-items:center;z-index:60;padding:16px;animation:in .15s}.modal>div{background:var(--card);border-radius:18px;padding:22px;max-width:380px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.35)}.modal h3{margin-bottom:6px}.modal .row{margin-top:18px;justify-content:flex-end}
+#login{min-height:100vh;display:grid;place-items:center;padding:18px;background:radial-gradient(circle at 20% 10%,rgba(255,196,0,.18),transparent 45%),var(--bg)}
+.lcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;width:100%;max-width:370px;box-shadow:0 20px 60px rgba(0,0,0,.18)}.lcard .brand{color:var(--ink);font-size:21px;margin-bottom:4px}.lcard input,.lcard button.pri{width:100%;margin-top:10px}.lcard button.pri{padding:12px;font-size:16px}
+.lcard details{margin-top:12px;font-size:13px;color:var(--mut)}.lcard summary{cursor:pointer}.err{color:var(--bad);font-size:13.5px;margin:12px 0 0;line-height:1.4}
+.pw{position:relative}.pw button{position:absolute;right:5px;top:15px;padding:5px 9px;background:transparent;color:var(--mut);font-size:13px}
+.note{background:rgba(255,196,0,.18);border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:14px}
+@media(max-width:1060px){.right .chip{display:none}}
+@media(max-width:640px){.top{padding:8px 12px;gap:8px}.tabs{order:3;flex-basis:100%}.right .chip{display:none}main{padding:14px 12px 80px}.kpi b{font-size:24px}}
 </style></head><body>
-<div id="login" class="card" style="display:none"><h2>Admin</h2><input id="lurl" placeholder="Google-Skript-URL (…/exec)" autocapitalize="off" spellcheck="false"><input id="lu" placeholder="Benutzer" autocomplete="username" autocapitalize="off"><input id="lp" type="password" placeholder="Passwort" autocomplete="current-password"><button id="lb">Anmelden</button><p id="le" style="color:var(--bad)"></p></div>
-<div id="app" style="display:none">
-  <h2>Stempeluhr Admin <small id="who"></small> <small><a id="out">Abmelden</a></small></h2>
-  <div id="msg"></div>
-  <div class="tabs" id="tabs"></div>
-  <div id="view"></div>
-</div>
+<div id="login" hidden><div class="lcard"><div class="brand"><i></i>Stempeluhr <span>Admin</span></div><small>Anmelden mit deinem Benutzerkonto</small>
+<input id="lu" placeholder="Benutzername" autocomplete="username" autocapitalize="off"><div class="pw"><input id="lp" type="password" placeholder="Passwort" autocomplete="current-password"><button type="button" id="lpv" class="ghost">zeigen</button></div>
+<button class="pri" id="lb">Anmelden</button><p class="err" id="le"></p>
+<details id="conn"><summary>Verbindung (Google-Skript-URL)</summary><input id="lurl" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" spellcheck="false"><a id="lt" target="_blank" rel="noopener" style="display:block;margin-top:8px">Verbindung testen – muss {"status":"ok"…} zeigen</a></details></div></div>
+<div id="app" hidden>
+<header class="top"><div class="brand"><i></i>Stempeluhr <span>Admin</span></div><nav class="tabs" id="tabs"></nav><div class="right"><span class="chip" id="who"></span><button class="ghost sm" id="theme" title="Hell/Dunkel wechseln">Design</button><button class="ghost sm" id="out">Abmelden</button></div></header>
+<main><div id="view"></div></main></div>
+<div id="toasts"></div><div id="modalbox"></div>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -32,80 +74,120 @@ function remote(fn,a){
   const body=fn==='adminLogin'?{action:'adminLogin',user:a[0],pass:a[1]}:fn==='adminApi'?{action:'adminApi',token:a[0],act:a[1],p:a[2]}:{action:'adminLogout',token:a[0]};
   return fetch(url,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(r=>r.json()).then(d=>{if(d.status!=='ok')throw new Error(d.message||'Fehler');return d.r}).catch(e=>{throw new Error(e.message==='Failed to fetch'?'Skript nicht erreichbar – prüfe: 1) URL endet auf /exec (nicht /dev), 2) Bereitstellung: Ausführen als „Ich“, Zugriff „Jeder“, 3) nach Code-Änderungen neue Version veröffentlichen. „Verbindung testen“ muss {"status":"ok"…} zeigen (sonst ist es eine Google-Anmeldeseite = Zugriff falsch).':e.message)});}
 const run=(fn,...a)=>inGoogle?new Promise((res,rej)=>google.script.run.withSuccessHandler(res).withFailureHandler(e=>rej(new Error(e&&e.message||e)))[fn](...a)):remote(fn,a);
-let token=ss.get('tok'), role=ss.get('role')||'', tab='home', month=new Date().toLocaleDateString('sv-SE').slice(0,7), cur=null, timer=null;
+
+let token=ss.get('tok'),role=ss.get('role')||'',tab='home',month=new Date().toLocaleDateString('sv-SE').slice(0,7),cur=null,sub='z',timer=null,q='';
 const hm=s=>Math.floor(s/3600)+':'+String(Math.floor(s%3600/60)).padStart(2,'0');
 const d2=ms=>new Date(ms).toLocaleDateString('de-DE'),t2=ms=>new Date(ms).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}),dt2=ms=>ms?d2(ms)+' '+t2(ms):'–';
-function note(m,bad){$('msg').innerHTML=m?`<div class="msg ${bad?'err':''}">${esc(m)}</div>`:'';}
-async function api(a,p){const r=await run('adminApi',token,a,p||{});if(!r.ok){if(r.code===401){logout(true);throw new Error(r.msg)}throw new Error(r.msg||'Fehler')}return r}
-async function act(a,p,after){try{const r=await api(a,p);note(r.msg||'');(after||render)();return r}catch(e){note(e.message,true)}}
-function logout(silent){if(token)run('adminLogout',token).catch(()=>{});ss.del('tok');token=null;clearInterval(timer);$('app').style.display='none';$('login').style.display='block';if(!silent)note('')}
+const rel=ms=>{if(!ms)return'noch nie';const m=Math.round((Date.now()-ms)/60000);return m<1?'gerade eben':m<60?`vor ${m} Min.`:m<1440?`vor ${Math.round(m/60)} Std.`:`vor ${Math.round(m/1440)} Tg.`};
+const init=n=>String(n).split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
+const RL={dev:'Entwickler',admin:'Admin',user:'Mitarbeiter'},rchip=r=>`<span class="chip ${r==='dev'?'dev':r==='admin'?'adm':''}">${RL[r]||esc(r)}</span>`;
+const mshift=(m,d)=>{const [y,mo]=m.split('-').map(Number);const x=new Date(y,mo-1+d,1);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')};
+const mlabel=m=>{const [y,mo]=m.split('-').map(Number);return new Date(y,mo-1,1).toLocaleDateString('de-DE',{month:'long',year:'numeric'})};
+function toast(m,bad){if(!m)return;const t=document.createElement('div');t.className='toast'+(bad?' bad':'');t.textContent=m;$('toasts').appendChild(t);setTimeout(()=>t.remove(),bad?6000:2800)}
+function ask(title,text,okLabel,danger){return new Promise(res=>{const b=$('modalbox');b.innerHTML=`<div class="modal"><div><h3>${esc(title)}</h3><div class="mut">${esc(text)}</div><div class="row"><button class="ghost" id="mn">Abbrechen</button><button class="${danger?'danger':'pri'}" id="my">${esc(okLabel||'OK')}</button></div></div></div>`;$('mn').onclick=()=>{b.innerHTML='';res(false)};$('my').onclick=()=>{b.innerHTML='';res(true)}})}
+const skel=n=>Array.from({length:n},()=>'<div class="sk"></div>').join('');
+async function api(a,p){const r=await run('adminApi',token,a,p||{});if(!r.ok){if(r.code===401){logout(true);throw new Error(r.msg||'Bitte neu anmelden.')}throw new Error(r.msg||'Fehler')}return r}
+async function act(a,p,after){try{const r=await api(a,p);toast(r.msg||'Gespeichert');(after||render)();return r}catch(e){toast(e.message,true)}}
+function logout(silent){if(token)run('adminLogout',token).catch(()=>{});ss.del('tok');token=null;clearInterval(timer);$('app').hidden=true;$('login').hidden=false;if(silent)$('le').textContent='Sitzung abgelaufen – bitte neu anmelden.'}
 $('out').onclick=()=>logout();
-$('lb').onclick=async()=>{$('le').textContent='';if(!inGoogle&&$('lurl').value)lsSet('url',$('lurl').value.trim());try{const r=await run('adminLogin',$('lu').value,$('lp').value);if(!r.ok){$('le').textContent=r.msg;return}token=r.token;role=r.role;ss.set('tok',token);ss.set('role',role);ss.set('me',r.user);ss.set('who',r.name+' · '+r.roleLabel);start()}catch(e){$('le').textContent=e.message}};
-$('lp').addEventListener('keydown',e=>{if(e.key==='Enter')$('lb').click()});
-function start(){$('login').style.display='none';$('app').style.display='block';$('who').textContent=ss.get('who')||'';
-  const tabs=[['home','Übersicht'],['users','Benutzer'],['tasks','Aufgaben'],['msgs','Nachrichten'],['veh','Fahrzeuge']];if(role==='dev')tabs.push(['sys','System']);
-  $('tabs').innerHTML=tabs.map(([k,l])=>`<button data-t="${k}" class="${tab===k?'on':''}">${l}</button>`).join('');
-  $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;cur=null;note('');start()});
-  render();clearInterval(timer);timer=setInterval(()=>{if(tab==='home'&&!cur&&!document.hidden)render()},60000)}
-const selStyle='';
-async function render(){
-  const v=$('view');
-  try{
-    if(cur)return renderUser();
-    if(tab==='home'){const r=await api('overview',{month});
-      v.innerHTML=`<div class="card"><h3>Mitarbeiter heute <small>(aktualisiert jede Minute · Monat ${esc(r.month)})</small></h3><div class="wrap"><table><tr><th>Mitarbeiter</th><th>Status</th><th>Heute</th><th>Monat</th><th>km</th><th>Aufgaben</th><th>Letzter Sync</th></tr>`+
-      r.rows.map(o=>`<tr><td><a data-u="${esc(o.user)}">${esc(o.name)}</a></td><td class="${o.live?'live':'mut'}">${esc(o.status)}${o.trip?' · Fahrt '+esc(o.trip):''}</td><td>${hm(o.today)}</td><td>${hm(o.month)}</td><td>${o.km}</td><td>${o.tasks}</td><td>${dt2(o.sync)}</td></tr>`).join('')+
-      `</table></div><div class="row"><button class="g" id="rl">Log-Blätter aktualisieren</button> <a href="${esc(r.sheetUrl)}" target="_blank" rel="noopener">Google Sheet öffnen</a></div></div>`;
-      v.querySelectorAll('[data-u]').forEach(a=>a.onclick=()=>{cur=a.dataset.u;render()});$('rl').onclick=()=>act('refreshLogs');
-    }else if(tab==='users'){const r=await api('users');
-      v.innerHTML=`<div class="card"><h3>Benutzer</h3><div class="wrap"><table><tr><th>Name</th><th>Login</th><th>Rolle</th><th>Sync</th><th></th></tr>`+
-      r.users.map(u=>`<tr class="${u.active?'':'off'}"><td><a data-u="${esc(u.user)}">${esc(u.name)}</a></td><td>${esc(u.user)}</td><td>${esc(u.roleLabel)}</td><td>${dt2(u.sync)}</td><td><div class="row"><input type="password" placeholder="neues Passwort" style="width:130px" data-pw="${esc(u.user)}"><button data-set="${esc(u.user)}">Setzen</button>`+
-      (u.user===me()?'':`<button class="g" data-tg="${esc(u.user)}">${u.active?'Sperren':'Aktivieren'}</button>`+(role==='dev'?`<select data-rs="${esc(u.user)}">${Object.keys(r.roles).map(k=>`<option value="${k}" ${k===u.role?'selected':''}>${esc(r.roles[k])}</option>`).join('')}</select><button data-rb="${esc(u.user)}">Rolle</button>`:''))+`</div></td></tr>`).join('')+`</table></div></div>
-      <div class="card"><h3>Neuer ${role==='dev'?'Benutzer':'Mitarbeiter'}</h3><div class="row"><input id="nn" placeholder="Anzeigename"><input id="nu" placeholder="Benutzername" autocapitalize="off"><input id="np" type="password" placeholder="Passwort (min. 8)">${role==='dev'?`<select id="nr">${['user','admin','dev'].map(k=>`<option value="${k}">${{user:'Mitarbeiter',admin:'Admin',dev:'Entwickler'}[k]}</option>`).join('')}</select>`:''}<button id="nb">Anlegen</button></div></div>`;
-      v.querySelectorAll('[data-u]').forEach(a=>a.onclick=()=>{cur=a.dataset.u;render()});
-      v.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>act('resetPw',{user:b.dataset.set,pass:v.querySelector(`[data-pw="${b.dataset.set}"]`).value}));
-      v.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>act('toggle',{user:b.dataset.tg}));
-      v.querySelectorAll('[data-rb]').forEach(b=>b.onclick=()=>act('setRole',{user:b.dataset.rb,role:v.querySelector(`[data-rs="${b.dataset.rb}"]`).value}));
-      $('nb').onclick=()=>act('createUser',{name:$('nn').value,user:$('nu').value,pass:$('np').value,role:$('nr')?$('nr').value:'user'});
-    }else if(tab==='tasks'){const [r,u]=await Promise.all([api('tasks'),api('users')]);
-      v.innerHTML=`<div class="card"><h3>Aufgabe zuweisen</h3><div class="row"><select id="at"><option value="all">Alle Mitarbeiter</option>${u.users.filter(x=>x.active&&x.role==='user').map(x=>`<option value="${esc(x.user)}">${esc(x.name)}</option>`).join('')}</select><input id="ati" placeholder="Aufgabe" maxlength="160" style="flex:1;min-width:160px"><input id="ad" type="date"><input id="an" placeholder="Notiz (optional)" maxlength="200"><label><input id="ap" type="checkbox"> hoch</label><button id="ab">Zuweisen</button></div>
-      <div class="wrap"><table><tr><th>Mitarbeiter</th><th>Aufgabe</th><th>Fällig</th><th>Status</th><th></th></tr>${r.tasks.map(t=>`<tr><td>${esc(t.name)}</td><td>${t.prio?'<b>!</b> ':''}${esc(t.title)} <small>${esc(t.note)}</small></td><td>${esc(t.due||'–')}</td><td>${t.done?'<span style="color:var(--ok)">erledigt '+d2(t.done)+'</span>':'offen'}</td><td><button class="g" data-dt="${t.id}">Löschen</button></td></tr>`).join('')}</table></div></div>`;
-      $('ab').onclick=()=>act('assign',{to:$('at').value,title:$('ati').value,due:$('ad').value,note:$('an').value,prio:$('ap').checked});
-      v.querySelectorAll('[data-dt]').forEach(b=>b.onclick=()=>act('delTask',{id:b.dataset.dt}));
-    }else if(tab==='msgs'){const [r,u]=await Promise.all([api('messages'),api('users')]);
-      v.innerHTML=`<div class="card"><h3>Nachricht senden</h3><div class="row"><select id="mt"><option value="all">Alle Mitarbeiter</option>${u.users.filter(x=>x.active&&x.role==='user').map(x=>`<option value="${esc(x.user)}">${esc(x.name)}</option>`).join('')}</select><input id="mti" placeholder="Titel" maxlength="80" style="flex:1;min-width:140px"><input id="mb" placeholder="Text (optional)" maxlength="500" style="flex:2;min-width:200px"><button id="mbn">Senden</button></div>
-      <p class="mut" style="font-size:12px">Erscheint in der App beim Öffnen und danach etwa alle 2 Minuten als Karte und Benachrichtigung, bis „Gelesen“ gedrückt wird.</p>
-      <table><tr><th>An</th><th>Titel</th><th>Gesendet</th><th>Gelesen</th></tr>${r.msgs.map(m=>`<tr><td>${esc(m.user)}</td><td>${esc(m.title)}</td><td>${dt2(m.created)}</td><td>${m.read?dt2(m.read):'<span class="live">offen</span>'}</td></tr>`).join('')}</table></div>`;
-      $('mbn').onclick=()=>act('sendMsg',{to:$('mt').value,title:$('mti').value,body:$('mb').value});
-    }else if(tab==='veh'){const r=await api('vehicles');const soon=d=>d&&(new Date(d)-Date.now())/864e5<=30;
-      const badge=d=>!d?'<span class="mut">–</span>':(new Date(d)<new Date(new Date().toDateString())?`<b style="color:var(--bad)">${esc(new Date(d).toLocaleDateString('de-DE'))} überfällig</b>`:soon(d)?`<b style="color:var(--sig)">${esc(new Date(d).toLocaleDateString('de-DE'))}</b>`:esc(new Date(d).toLocaleDateString('de-DE')));
-      v.innerHTML=`<div class="card"><h3>Fahrzeuge</h3>${r.vehicles.some(x=>soon(x.tuev)||soon(x.service))?'<div class="msg">Fristen fällig oder bald fällig.</div>':''}<div class="wrap"><table><tr><th>Kennzeichen</th><th>Name</th><th>TÜV</th><th>Service</th><th>Verbrauch</th><th></th></tr>${r.vehicles.map(x=>`<tr><td>${esc(x.plate)}</td><td>${esc(x.name)}</td><td>${badge(x.tuev)}</td><td>${badge(x.service)}</td><td>${x.l100!=null?String(x.l100).replace('.',',')+' l/100 km':'–'}</td>
-      <td><div class="row"><input type="date" value="${esc(x.tuev)}" data-tv="${esc(x.plate)}" title="TÜV"><input type="date" value="${esc(x.service)}" data-sv="${esc(x.plate)}" title="Service"><button data-vs="${esc(x.plate)}" data-n="${esc(x.name)}">Speichern</button><button class="g" data-vd="${esc(x.plate)}">Löschen</button></div></td></tr>`).join('')}</table></div>
-      <p class="mut" style="font-size:12px">Verbrauch = Näherung aus den Tankungen (Volltanken angenommen, mind. 2 Tankungen). Fahrzeuge erscheinen in der App als Auswahl; TÜV/Service ≤ 30 Tage werden dort angezeigt.</p>
-      <div class="row"><input id="vp" placeholder="Kennzeichen" maxlength="20"><input id="vn" placeholder="Bezeichnung" maxlength="60"><label>TÜV <input id="vt" type="date"></label><label>Service <input id="vsv" type="date"></label><button id="vb">Fahrzeug anlegen</button></div></div>`;
-      v.querySelectorAll('[data-vs]').forEach(b=>b.onclick=()=>act('vehSave',{plate:b.dataset.vs,name:b.dataset.n,tuev:v.querySelector(`[data-tv="${b.dataset.vs}"]`).value,service:v.querySelector(`[data-sv="${b.dataset.vs}"]`).value}));
-      v.querySelectorAll('[data-vd]').forEach(b=>b.onclick=()=>confirm('Fahrzeug löschen?')&&act('vehDel',{plate:b.dataset.vd}));
-      $('vb').onclick=()=>act('vehSave',{plate:$('vp').value,name:$('vn').value,tuev:$('vt').value,service:$('vsv').value});
-    }else if(tab==='sys'){const [b,a]=await Promise.all([api('backups'),api('activity')]);
-      v.innerHTML=`<div class="card"><h3>Sicherungen</h3><p class="mut">Täglich um ca. 3 Uhr als Kopie des gesamten Sheets im Drive-Ordner „Stempeluhr Backups“ (letzte 14). Zurückspielen: Kopie öffnen und deren Inhalt/Script übernehmen, oder im Original die Versionsgeschichte nutzen.</p><table><tr><th>Datei</th><th>Zeit</th></tr>${b.files.map(f=>`<tr><td>${esc(f.name)}</td><td>${dt2(f.ts)}</td></tr>`).join('')}</table><button id="bn">Jetzt sichern</button></div>
-      <div class="card"><h3>Aktivität</h3><div class="wrap"><table><tr><th>Zeit</th><th>Wer</th><th>Aktion</th><th>Details</th></tr>${a.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('')}</table></div></div>`;
-      $('bn').onclick=()=>act('backupNow');
-    }
-  }catch(e){note(e.message,true)}
-}
+$('lpv').onclick=()=>{const p=$('lp');p.type=p.type==='password'?'text':'password';$('lpv').textContent=p.type==='password'?'zeigen':'verbergen'};
+$('lt').onclick=()=>{$('lt').href=$('lurl').value.trim()||DEFAULT_URL};
+$('lb').onclick=async()=>{$('le').textContent='';if(!inGoogle)lsSet('url',($('lurl').value||DEFAULT_URL).trim());$('lb').disabled=true;$('lb').textContent='Anmelden …';
+  try{const r=await run('adminLogin',$('lu').value.trim(),$('lp').value);if(!r.ok){$('le').textContent=r.msg;return}token=r.token;role=r.role;ss.set('tok',token);ss.set('role',role);ss.set('me',r.user);ss.set('who',r.name+' · '+r.roleLabel);$('lp').value='';start()}
+  catch(e){$('le').textContent=e.message;if(/nicht erreichbar|URL/.test(e.message))$('conn').open=true}finally{$('lb').disabled=false;$('lb').textContent='Anmelden'}};
+['lp','lu'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')$('lb').click()}));
+$('theme').onclick=()=>{const cur=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');const n=cur==='dark'?'light':'dark';document.documentElement.dataset.theme=n;lsSet('theme',n)};
+if(lsGet('theme'))document.documentElement.dataset.theme=lsGet('theme');
+const TABS=[['home','Übersicht'],['users','Benutzer'],['tasks','Aufgaben'],['msgs','Nachrichten'],['veh','Fahrzeuge']];
+function start(){$('login').hidden=true;$('app').hidden=false;$('who').textContent=ss.get('who')||'';
+  const tabs=TABS.concat(role==='dev'?[['sys','System']]:[]);
+  $('tabs').innerHTML=tabs.map(([k,l])=>`<button data-t="${k}" class="${tab===k&&!cur?'on':''}">${l}</button>`).join('');
+  $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;cur=null;q='';start()});
+  render();clearInterval(timer);timer=setInterval(()=>{if(tab==='home'&&!cur&&!document.hidden&&!document.activeElement.matches('input,select'))render(true)},60000)}
 const me=()=>ss.get('me')||'';
+const sum=(a,k)=>a.reduce((s,x)=>s+(x[k]||0),0);
+async function render(quiet){
+  const v=$('view');if(!quiet)v.innerHTML=skel(3);
+  try{
+    if(cur)return await renderUser();
+    if(tab==='home')await home(v);else if(tab==='users')await users(v);else if(tab==='tasks')await tasks(v);else if(tab==='msgs')await msgs(v);else if(tab==='veh')await vehicles(v);else if(tab==='sys')await system(v);
+  }catch(e){if(token)v.innerHTML=`<div class="card empty"><big>⚠️</big>${esc(e.message)}<div class="row" style="justify-content:center;margin-top:12px"><button class="pri" onclick="render()">Erneut versuchen</button></div></div>`}
+}
+async function home(v){
+  const r=await api('overview',{month});const rows=r.rows.filter(o=>!q||(o.name+' '+o.user).toLowerCase().includes(q.toLowerCase()));const liveN=r.rows.filter(o=>o.live).length;
+  v.innerHTML=`<div class="head"><h2>Übersicht</h2><div class="mnav"><button data-m="-1">‹</button><b>${esc(mlabel(r.month))}</b><button data-m="1">›</button></div></div>
+  <div class="kpis"><div class="kpi sig"><small>Jetzt eingestempelt</small><b>${liveN}<span style="font-size:15px;font-weight:600"> / ${r.rows.length}</span></b></div><div class="kpi"><small>Stunden heute</small><b>${hm(sum(r.rows,'today'))}</b></div><div class="kpi"><small>Stunden Monat</small><b>${hm(sum(r.rows,'month'))}</b></div><div class="kpi"><small>km Monat</small><b>${sum(r.rows,'km').toLocaleString('de-DE')}</b></div><div class="kpi"><small>Offene Aufgaben</small><b>${sum(r.rows,'tasks')}</b></div></div>
+  <div class="row" style="margin-bottom:12px"><input id="sq" class="grow" placeholder="Person suchen …" value="${esc(q)}"><a href="${esc(r.sheetUrl)}" target="_blank" rel="noopener">Google Sheet öffnen ↗</a><button class="ghost sm" id="rl">Log-Blätter aktualisieren</button></div>
+  ${rows.length?`<div class="grid">${rows.map(o=>`<div class="emp ${o.live?'live':''}" data-u="${esc(o.user)}"><div class="emp-h"><div class="av">${esc(init(o.name))}</div><div style="min-width:0"><b>${esc(o.name)}</b><small>${esc(RL[o.role]||o.role)}</small></div></div>
+  <div class="st ${o.live?'on':''}"><span class="pulse"></span>${esc(o.status)}${o.trip?' · Fahrzeug '+esc(o.trip):''}</div>
+  <div class="nums"><div><small>Heute</small><b>${hm(o.today)}</b></div><div><small>Monat</small><b>${hm(o.month)}</b></div><div><small>km</small><b>${o.km.toLocaleString('de-DE')}</b></div></div>
+  <div class="foot"><span>Sync ${rel(o.sync)}</span><span>${o.tasks?o.tasks+' Aufgabe'+(o.tasks>1?'n':'')+' offen':'keine Aufgaben'}</span></div></div>`).join('')}</div>`:`<div class="card empty"><big>🔍</big>Keine Person gefunden.</div>`}`;
+  v.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{month=mshift(month,+b.dataset.m);render()});
+  v.querySelectorAll('[data-u]').forEach(a=>a.onclick=()=>{cur=a.dataset.u;sub='z';start()});
+  $('sq').oninput=e=>{q=e.target.value;clearTimeout(window.__qt);window.__qt=setTimeout(()=>{home(v).then(()=>{const i=$('sq');i.focus();i.setSelectionRange(q.length,q.length)})},250)};
+  $('rl').onclick=()=>act('refreshLogs');
+}
+async function users(v){
+  const r=await api('users');
+  v.innerHTML=`<div class="head"><h2>Benutzer</h2></div><div class="card">${r.users.map(u=>`<div class="urow ${u.active?'':'off'}"><div class="av">${esc(init(u.name))}</div><div class="who"><b><a data-u="${esc(u.user)}">${esc(u.name)}</a></b><small>${esc(u.user)} · Sync ${rel(u.sync)}</small></div>${rchip(u.role)}${u.active?'':'<span class="chip bad">gesperrt</span>'}
+  <div class="row"><input type="password" placeholder="neues Passwort" style="width:150px" data-pw="${esc(u.user)}"><button class="ghost sm" data-set="${esc(u.user)}">Setzen</button>${u.user===me()?'':`<button class="ghost sm" data-tg="${esc(u.user)}">${u.active?'Sperren':'Entsperren'}</button>${role==='dev'?`<select data-rs="${esc(u.user)}">${Object.keys(r.roles).map(k=>`<option value="${k}" ${k===u.role?'selected':''}>${esc(r.roles[k])}</option>`).join('')}</select><button class="ghost sm" data-rb="${esc(u.user)}">Rolle ändern</button>`:''}`}</div></div>`).join('')}</div>
+  <div class="card"><h3>Neuer ${role==='dev'?'Benutzer':'Mitarbeiter'}</h3><div class="row"><input id="nn" class="grow" placeholder="Anzeigename"><input id="nu" class="grow" placeholder="Benutzername (a-z, 0-9)" autocapitalize="off"><input id="np" class="grow" type="password" placeholder="Passwort (min. 8)">${role==='dev'?`<select id="nr"><option value="user">Mitarbeiter</option><option value="admin">Admin</option><option value="dev">Entwickler</option></select>`:''}<button class="pri" id="nb">Anlegen</button></div></div>`;
+  v.querySelectorAll('[data-u]').forEach(a=>a.onclick=()=>{cur=a.dataset.u;sub='z';start()});
+  v.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>act('resetPw',{user:b.dataset.set,pass:v.querySelector(`[data-pw="${b.dataset.set}"]`).value}));
+  v.querySelectorAll('[data-tg]').forEach(b=>b.onclick=async()=>{if(await ask(b.textContent+'?',b.dataset.tg+' – alle Geräte werden abgemeldet.',b.textContent,b.textContent==='Sperren'))act('toggle',{user:b.dataset.tg})});
+  v.querySelectorAll('[data-rb]').forEach(b=>b.onclick=()=>act('setRole',{user:b.dataset.rb,role:v.querySelector(`[data-rs="${b.dataset.rb}"]`).value}));
+  $('nb').onclick=()=>act('createUser',{name:$('nn').value,user:$('nu').value,pass:$('np').value,role:$('nr')?$('nr').value:'user'});
+}
+async function tasks(v){
+  const [r,u]=await Promise.all([api('tasks'),api('users')]);const open=r.tasks.filter(t=>!t.done).length;
+  v.innerHTML=`<div class="head"><h2>Aufgaben</h2><span class="chip warn">${open} offen</span></div>
+  <div class="card"><h3>Aufgabe zuweisen</h3><div class="row"><select id="at"><option value="all">Alle Mitarbeiter</option>${u.users.filter(x=>x.active&&x.role==='user').map(x=>`<option value="${esc(x.user)}">${esc(x.name)}</option>`).join('')}</select><input id="ati" class="grow" placeholder="Aufgabe" maxlength="160"><input id="ad" type="date"><input id="an" class="grow" placeholder="Notiz (optional)" maxlength="200"><label class="row" style="gap:5px"><input id="ap" type="checkbox"> wichtig</label><button class="pri" id="ab">Zuweisen</button></div></div>
+  <div class="card"><h3>Alle Aufgaben</h3>${r.tasks.length?`<div class="tw"><table><thead><tr><th>Mitarbeiter</th><th>Aufgabe</th><th>Fällig</th><th>Status</th><th></th></tr></thead><tbody>${r.tasks.map(t=>`<tr><td>${esc(t.name)}</td><td>${t.prio?'<span class="chip bad">wichtig</span> ':''}${esc(t.title)}${t.note?`<br><small>${esc(t.note)}</small>`:''}</td><td>${esc(t.due||'–')}</td><td>${t.done?`<span class="chip ok">erledigt ${d2(t.done)}</span>`:'<span class="chip warn">offen</span>'}</td><td><button class="ghost sm" data-dt="${t.id}">Löschen</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><big>✅</big>Noch keine Aufgaben.</div>'}</div>`;
+  $('ab').onclick=()=>act('assign',{to:$('at').value,title:$('ati').value,due:$('ad').value,note:$('an').value,prio:$('ap').checked});
+  v.querySelectorAll('[data-dt]').forEach(b=>b.onclick=async()=>{if(await ask('Aufgabe löschen?','Sie verschwindet auch in der App.','Löschen',true))act('delTask',{id:b.dataset.dt})});
+}
+async function msgs(v){
+  const [r,u]=await Promise.all([api('messages'),api('users')]);
+  v.innerHTML=`<div class="head"><h2>Nachrichten</h2></div><div class="card"><h3>Nachricht senden</h3><div class="row"><select id="mt"><option value="all">Alle Mitarbeiter</option>${u.users.filter(x=>x.active&&x.role==='user').map(x=>`<option value="${esc(x.user)}">${esc(x.name)}</option>`).join('')}</select><input id="mti" class="grow" placeholder="Titel" maxlength="80"><input id="mb" class="grow" style="flex:2" placeholder="Text (optional)" maxlength="500"><button class="pri" id="mbn">Senden</button></div><p class="mut" style="font-size:13px;margin:10px 0 0">Erscheint in der App als Karte und Benachrichtigung (beim Öffnen, danach etwa alle 2 Minuten), bis „Gelesen“ gedrückt wird.</p></div>
+  <div class="card"><h3>Zuletzt gesendet</h3>${r.msgs.length?`<div class="tw"><table><thead><tr><th>An</th><th>Titel</th><th>Gesendet</th><th>Gelesen</th></tr></thead><tbody>${r.msgs.map(m=>`<tr><td>${esc(m.user)}</td><td>${esc(m.title)}</td><td>${dt2(m.created)}</td><td>${m.read?`<span class="chip ok">${dt2(m.read)}</span>`:'<span class="chip warn">offen</span>'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><big>💬</big>Noch keine Nachrichten.</div>'}</div>`;
+  $('mbn').onclick=()=>act('sendMsg',{to:$('mt').value,title:$('mti').value,body:$('mb').value});
+}
+const days=d=>d?Math.floor((new Date(d+'T00:00:00')-new Date(new Date().toDateString()))/864e5):null;
+const due=d=>{if(!d)return'<span class="mut">–</span>';const n=days(d),l=new Date(d+'T00:00:00').toLocaleDateString('de-DE');return n<0?`<span class="chip bad">${l} · überfällig</span>`:n<=30?`<span class="chip warn">${l} · in ${n} Tg.</span>`:`<span class="chip ok">${l}</span>`};
+async function vehicles(v){
+  const r=await api('vehicles'),soon=r.vehicles.filter(x=>[x.tuev,x.service].some(d=>d&&days(d)<=30));
+  v.innerHTML=`<div class="head"><h2>Fahrzeuge</h2></div>${soon.length?`<div class="note">Fristen fällig oder bald fällig: <b>${esc(soon.map(x=>x.plate).join(', '))}</b></div>`:''}
+  <div class="grid">${r.vehicles.map(x=>`<div class="card" style="margin:0"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(x.plate)}</h3><small>${esc(x.name)||'–'}</small></div>${x.l100!=null?`<span class="chip">${String(x.l100).replace('.',',')} l/100 km</span>`:'<span class="chip">Verbrauch –</span>'}</div>
+  <div style="margin:12px 0 4px"><small>TÜV</small> ${due(x.tuev)}</div><div><small>Service</small> ${due(x.service)}</div>
+  <div class="row" style="margin-top:12px"><input type="date" value="${esc(x.tuev)}" data-tv="${esc(x.plate)}" title="TÜV"><input type="date" value="${esc(x.service)}" data-sv="${esc(x.plate)}" title="Service"></div>
+  <div class="row" style="margin-top:8px"><button class="ghost sm" data-vs="${esc(x.plate)}" data-n="${esc(x.name)}">Speichern</button><button class="ghost sm" data-vd="${esc(x.plate)}">Löschen</button></div></div>`).join('')||'<div class="card empty" style="grid-column:1/-1"><big>🚐</big>Noch keine Fahrzeuge.</div>'}</div>
+  <div class="card" style="margin-top:16px"><h3>Fahrzeug anlegen</h3><div class="row"><input id="vp" placeholder="Kennzeichen" maxlength="20"><input id="vn" class="grow" placeholder="Bezeichnung" maxlength="60"><label class="row" style="gap:6px"><small>TÜV</small><input id="vt" type="date"></label><label class="row" style="gap:6px"><small>Service</small><input id="vsv" type="date"></label><button class="pri" id="vb">Anlegen</button></div><p class="mut" style="font-size:13px;margin:10px 0 0">Verbrauch = Näherung aus den Tankungen (Volltanken angenommen, mind. 2 Tankungen). Fahrzeuge erscheinen in der App als Auswahl; Fristen ≤ 30 Tage werden dort angezeigt.</p></div>`;
+  v.querySelectorAll('[data-vs]').forEach(b=>b.onclick=()=>act('vehSave',{plate:b.dataset.vs,name:b.dataset.n,tuev:v.querySelector(`[data-tv="${b.dataset.vs}"]`).value,service:v.querySelector(`[data-sv="${b.dataset.vs}"]`).value}));
+  v.querySelectorAll('[data-vd]').forEach(b=>b.onclick=async()=>{if(await ask('Fahrzeug löschen?',b.dataset.vd,'Löschen',true))act('vehDel',{plate:b.dataset.vd})});
+  $('vb').onclick=()=>act('vehSave',{plate:$('vp').value,name:$('vn').value,tuev:$('vt').value,service:$('vsv').value});
+}
+async function system(v){
+  const [b,a]=await Promise.all([api('backups'),api('activity')]);
+  v.innerHTML=`<div class="head"><h2>System</h2></div><div class="card"><h3>Sicherungen <small>täglich ca. 3 Uhr · letzte 14 im Drive-Ordner „Stempeluhr Backups“</small></h3>${b.files.length?`<div class="tw"><table><thead><tr><th>Datei</th><th>Erstellt</th></tr></thead><tbody>${b.files.map(f=>`<tr><td>${esc(f.name)}</td><td>${dt2(f.ts)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Noch keine Sicherung.</div>'}<div class="row" style="margin-top:12px"><button class="pri" id="bn">Jetzt sichern</button></div></div>
+  <div class="card"><h3>Aktivität <small>letzte 150</small></h3><div class="tw" style="max-height:420px"><table><thead><tr><th>Zeit</th><th>Wer</th><th>Aktion</th><th>Details</th></tr></thead><tbody>${a.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('')}</tbody></table></div></div>`;
+  $('bn').onclick=()=>act('backupNow');
+}
 async function renderUser(){
-  const v=$('view');const r=await api('userView',{user:cur,month});let tot=0,km=0;
-  v.innerHTML=`<div class="card"><h3>${esc(r.name)} – ${esc(r.month)}</h3><div class="row"><input type="month" id="mm" value="${esc(r.month)}"><button id="mg">Anzeigen</button><button class="g" id="c1">Zeiten CSV</button><button class="g" id="c2">Fahrtenbuch CSV</button><a id="bk">Zurück</a></div>
-  <div class="wrap"><table><tr><th>Datum</th><th>Start</th><th>Ende</th><th>Pause</th><th>Netto</th><th>Tätigkeit</th><th>Notiz</th></tr>${r.entries.map(e=>{const n=Math.max(0,(e.e-e.s-e.p)/1000);tot+=n;return`<tr><td>${d2(e.s)}</td><td>${t2(e.s)}</td><td>${t2(e.e)}</td><td>${Math.round(e.p/60000)} min</td><td>${hm(n)}</td><td>${esc(e.act)}</td><td>${esc(e.note)}</td></tr>`}).join('')}<tr><th colspan="4">Summe</th><th colspan="3">${hm(tot)} h</th></tr></table></div>
-  <h3>Fahrtenbuch</h3>${r.locks.length?`<p class="mut">Abschluss ${esc(r.month)}: ${r.locks.map(l=>esc(l.a)+' am '+dt2(l.ts)).join('; ')}</p>`:''}
-  <div class="wrap"><table><tr><th>Datum</th><th>Fahrzeug</th><th>km Start</th><th>km Ende</th><th>km</th><th>Von → Nach</th><th>Zweck</th><th>Getankt</th></tr>${r.trips.map(t=>{const k=Math.max(0,t.kmE-t.kmS);km+=k;return`<tr><td>${d2(t.s)} ${t2(t.s)}</td><td>${esc(t.veh)}</td><td>${t.kmS}</td><td>${t.kmE}</td><td>${k}</td><td>${esc(t.from)} → ${esc(t.to)}</td><td>${esc(t.purpose)}</td><td>${t.fuel?'ja'+(t.liters?' · '+String(t.liters).replace('.',',')+' l':''):''}</td></tr>`}).join('')}<tr><th colspan="4">Summe</th><th colspan="4">${km} km</th></tr></table></div></div>`;
-  $('mg').onclick=()=>{month=$('mm').value||month;render()};$('bk').onclick=()=>{cur=null;render()};
+  const v=$('view');const r=await api('userView',{user:cur,month});let tot=0,km=0,lit=0;const dayset=new Set();
+  r.entries.forEach(e=>{tot+=Math.max(0,(e.e-e.s-e.p)/1000);dayset.add(d2(e.s))});r.trips.forEach(t=>{km+=Math.max(0,t.kmE-t.kmS);lit+=t.liters||0});
   const cs=x=>{x=String(x==null?'':x).replace(/[\r\n;]+/g,' ');return /^[=+\-@]/.test(x)?"'"+x:x};
   const dl=(name,lines)=>{const b=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove()};
-  $('c1').onclick=()=>dl(`zeiten_${r.user}_${r.month}.csv`,['Datum;Start;Ende;Pause (min);Netto (h);Tätigkeit;Notiz'].concat(r.entries.map(e=>[d2(e.s),t2(e.s),t2(e.e),Math.round(e.p/60000),String(Math.round(Math.max(0,e.e-e.s-e.p)/36000)/100).replace('.',','),cs(e.act),cs(e.note)].join(';'))));
-  $('c2').onclick=()=>dl(`fahrten_${r.user}_${r.month}.csv`,['Datum;Fahrzeug;km Start;km Ende;km;Von;Nach;Zweck;Getankt;Liter'].concat(r.trips.map(t=>[d2(t.s)+' '+t2(t.s),cs(t.veh),t.kmS,t.kmE,Math.max(0,t.kmE-t.kmS),cs(t.from),cs(t.to),cs(t.purpose),t.fuel?'ja':'',t.liters?String(t.liters).replace('.',','):''].join(';'))));
+  v.innerHTML=`<div class="head"><button class="ghost sm" id="bk">‹ Zurück</button><h2>${esc(r.name)}</h2><div class="mnav"><button data-m="-1">‹</button><b>${esc(mlabel(r.month))}</b><button data-m="1">›</button></div></div>
+  <div class="kpis"><div class="kpi sig"><small>Netto-Stunden</small><b>${hm(tot)}</b></div><div class="kpi"><small>Arbeitstage</small><b>${dayset.size}</b></div><div class="kpi"><small>Ø pro Tag</small><b>${dayset.size?hm(tot/dayset.size):'0:00'}</b></div><div class="kpi"><small>Fahrten · km</small><b>${r.trips.length} · ${km.toLocaleString('de-DE')}</b></div><div class="kpi"><small>Getankt</small><b>${lit?String(Math.round(lit*10)/10).replace('.',',')+' l':'–'}</b></div></div>
+  <div class="row" style="margin-bottom:12px"><div class="seg"><button data-s="z" class="${sub==='z'?'on':''}">Zeiten (${r.entries.length})</button><button data-s="f" class="${sub==='f'?'on':''}">Fahrtenbuch (${r.trips.length})</button></div><span class="grow"></span><button class="ghost sm" id="csv">${sub==='z'?'Zeiten':'Fahrtenbuch'} als CSV</button></div>
+  ${r.locks.length?`<div class="note">Fahrtenbuch abgeschlossen: ${r.locks.map(l=>esc(l.a)+' am '+dt2(l.ts)).join('; ')}</div>`:''}
+  ${sub==='z'?(r.entries.length?`<div class="tw"><table><thead><tr><th>Datum</th><th>Start</th><th>Ende</th><th class="n">Pause</th><th class="n">Netto</th><th>Tätigkeit</th><th>Notiz</th></tr></thead><tbody>${r.entries.map(e=>`<tr><td>${d2(e.s)}</td><td>${t2(e.s)}</td><td>${t2(e.e)}</td><td class="n">${Math.round(e.p/60000)} min</td><td class="n">${hm(Math.max(0,(e.e-e.s-e.p)/1000))}</td><td>${esc(e.act)}</td><td>${esc(e.note)}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">Summe</td><td class="n">${hm(tot)} h</td><td colspan="2"></td></tr></tfoot></table></div>`:'<div class="card empty"><big>🕒</big>Keine Zeiten in diesem Monat.</div>')
+  :(r.trips.length?`<div class="tw"><table><thead><tr><th>Datum</th><th>Fahrzeug</th><th class="n">km Start</th><th class="n">km Ende</th><th class="n">km</th><th>Von → Nach</th><th>Zweck</th><th>Getankt</th></tr></thead><tbody>${r.trips.map(t=>`<tr><td>${d2(t.s)} ${t2(t.s)}</td><td>${esc(t.veh)}</td><td class="n">${t.kmS}</td><td class="n">${t.kmE}</td><td class="n">${Math.max(0,t.kmE-t.kmS)}</td><td>${esc(t.from)} → ${esc(t.to)}</td><td>${esc(t.purpose)}</td><td>${t.fuel?'<span class="chip warn">⛽ '+(t.liters?String(t.liters).replace('.',',')+' l':'ja')+'</span>':''}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="4">Summe</td><td class="n">${km} km</td><td colspan="3"></td></tr></tfoot></table></div>`:'<div class="card empty"><big>🚐</big>Keine Fahrten in diesem Monat.</div>')}`;
+  $('bk').onclick=()=>{cur=null;start()};
+  v.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{month=mshift(month,+b.dataset.m);render()});
+  v.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sub=b.dataset.s;render()});
+  $('csv').onclick=()=>sub==='z'?dl(`zeiten_${r.user}_${r.month}.csv`,['Datum;Start;Ende;Pause (min);Netto (h);Tätigkeit;Notiz'].concat(r.entries.map(e=>[d2(e.s),t2(e.s),t2(e.e),Math.round(e.p/60000),String(Math.round(Math.max(0,e.e-e.s-e.p)/36000)/100).replace('.',','),cs(e.act),cs(e.note)].join(';')))):dl(`fahrten_${r.user}_${r.month}.csv`,['Datum;Fahrzeug;km Start;km Ende;km;Von;Nach;Zweck;Getankt;Liter'].concat(r.trips.map(t=>[d2(t.s)+' '+t2(t.s),cs(t.veh),t.kmS,t.kmE,Math.max(0,t.kmE-t.kmS),cs(t.from),cs(t.to),cs(t.purpose),t.fuel?'ja':'',t.liters?String(t.liters).replace('.',','):''].join(';'))));
 }
-if(!inGoogle){$('lurl').value=lsGet('url')||DEFAULT_URL;$('lurl').style.display='block';const t=document.createElement('a');t.textContent='Verbindung testen (muss {"status":"ok"…} zeigen)';t.target='_blank';t.rel='noopener';t.style.cssText='display:block;margin-top:10px;font-size:13px';t.onclick=()=>{t.href=$('lurl').value.trim()||DEFAULT_URL};$('le').before(t)}else $('lurl').style.display='none'
-if(token){$('login').style.display='none';start()}else $('login').style.display='block';
+if(!inGoogle){$('lurl').value=lsGet('url')||DEFAULT_URL}else $('conn').hidden=true;
+if(token&&(inGoogle||lsGet('url')||DEFAULT_URL)){start()}else $('login').hidden=false;
 </script></body></html>
