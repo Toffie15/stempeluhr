@@ -24,7 +24,7 @@ button{background:#2f7bff;border:0;font-weight:700;cursor:pointer;color:#fff}but
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let mem={}; const ss={get:k=>{try{return sessionStorage.getItem(k)}catch(e){return mem[k]||null}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch(e){mem[k]=v}},del:k=>{try{sessionStorage.removeItem(k)}catch(e){delete mem[k]}}};
-const DEFAULT_URL='https://script.google.com/macros/s/AKfycbxNbOOZbxPgP9K9jOaQ0G_THOXuxll98lOm9jNEMnXl7ti9SlU2m6_hZNuQOJhxBLFOlw/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
+const DEFAULT_URL='https://script.google.com/macros/s/AKfycbxQ3IhRPE-Gv_qBurABPPmQ5DedYHPrZvtIDEbTn5eYdN086XTQhAy5-rL1RTNAssndmQ/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
 const inGoogle=!!(window.google&&google.script&&google.script.run);
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return mem['ls'+k]||null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){mem['ls'+k]=v}};
 function remote(fn,a){
