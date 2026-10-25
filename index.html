@@ -13,7 +13,7 @@ button{background:#2f7bff;border:0;font-weight:700;cursor:pointer;color:#fff}but
 .msg{background:#3a2a10;border-radius:8px;padding:9px 12px;margin:0 0 12px}.err{background:#4a1d1d}.live{color:var(--sig)}.off{opacity:.5}.wrap{overflow:auto}
 #login{max-width:320px;margin:12vh auto}#login input,#login button{width:100%;margin-top:10px}
 </style></head><body>
-<div id="login" class="card" style="display:none"><h2>Admin</h2><input id="lurl" placeholder="Google-Skript-URL (…/exec)" style="display:none" autocapitalize="off" spellcheck="false"><input id="lu" placeholder="Benutzer" autocomplete="username" autocapitalize="off"><input id="lp" type="password" placeholder="Passwort" autocomplete="current-password"><button id="lb">Anmelden</button><p id="le" style="color:var(--bad)"></p></div>
+<div id="login" class="card" style="display:none"><h2>Admin</h2><input id="lurl" placeholder="Google-Skript-URL (…/exec)" autocapitalize="off" spellcheck="false"><input id="lu" placeholder="Benutzer" autocomplete="username" autocapitalize="off"><input id="lp" type="password" placeholder="Passwort" autocomplete="current-password"><button id="lb">Anmelden</button><p id="le" style="color:var(--bad)"></p></div>
 <div id="app" style="display:none">
   <h2>Stempeluhr Admin <small id="who"></small> <small><a id="out">Abmelden</a></small></h2>
   <div id="msg"></div>
@@ -24,13 +24,13 @@ button{background:#2f7bff;border:0;font-weight:700;cursor:pointer;color:#fff}but
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let mem={}; const ss={get:k=>{try{return sessionStorage.getItem(k)}catch(e){return mem[k]||null}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch(e){mem[k]=v}},del:k=>{try{sessionStorage.removeItem(k)}catch(e){delete mem[k]}}};
-const DEFAULT_URL='https://script.google.com/macros/s/AKfycbxQ3IhRPE-Gv_qBurABPPmQ5DedYHPrZvtIDEbTn5eYdN086XTQhAy5-rL1RTNAssndmQ/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
+const DEFAULT_URL='https://script.google.com/macros/s/AKfycbxNbOOZbxPgP9K9jOaQ0G_THOXuxll98lOm9jNEMnXl7ti9SlU2m6_hZNuQOJhxBLFOlw/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
 const inGoogle=!!(window.google&&google.script&&google.script.run);
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return mem['ls'+k]||null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){mem['ls'+k]=v}};
 function remote(fn,a){
   const url=($('lurl').value||lsGet('url')||DEFAULT_URL).trim();if(!/^https:\/\/script\.google(usercontent)?\.com\//.test(url))return Promise.reject(new Error('Bitte die Google-Skript-URL (https://script.google.com/…/exec) eintragen.'));
   const body=fn==='adminLogin'?{action:'adminLogin',user:a[0],pass:a[1]}:fn==='adminApi'?{action:'adminApi',token:a[0],act:a[1],p:a[2]}:{action:'adminLogout',token:a[0]};
-  return fetch(url,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(r=>r.json()).then(d=>{if(d.status!=='ok')throw new Error(d.message||'Fehler');return d.r}).catch(e=>{throw new Error(e.message==='Failed to fetch'?'Skript nicht erreichbar (URL / Bereitstellung prüfen).':e.message)});}
+  return fetch(url,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(r=>r.json()).then(d=>{if(d.status!=='ok')throw new Error(d.message||'Fehler');return d.r}).catch(e=>{throw new Error(e.message==='Failed to fetch'?'Skript nicht erreichbar – prüfe: 1) URL endet auf /exec (nicht /dev), 2) Bereitstellung: Ausführen als „Ich“, Zugriff „Jeder“, 3) nach Code-Änderungen neue Version veröffentlichen. „Verbindung testen“ muss {"status":"ok"…} zeigen (sonst ist es eine Google-Anmeldeseite = Zugriff falsch).':e.message)});}
 const run=(fn,...a)=>inGoogle?new Promise((res,rej)=>google.script.run.withSuccessHandler(res).withFailureHandler(e=>rej(new Error(e&&e.message||e)))[fn](...a)):remote(fn,a);
 let token=ss.get('tok'), role=ss.get('role')||'', tab='home', month=new Date().toLocaleDateString('sv-SE').slice(0,7), cur=null, timer=null;
 const hm=s=>Math.floor(s/3600)+':'+String(Math.floor(s%3600/60)).padStart(2,'0');
@@ -106,6 +106,6 @@ async function renderUser(){
   $('c1').onclick=()=>dl(`zeiten_${r.user}_${r.month}.csv`,['Datum;Start;Ende;Pause (min);Netto (h);Tätigkeit;Notiz'].concat(r.entries.map(e=>[d2(e.s),t2(e.s),t2(e.e),Math.round(e.p/60000),String(Math.round(Math.max(0,e.e-e.s-e.p)/36000)/100).replace('.',','),cs(e.act),cs(e.note)].join(';'))));
   $('c2').onclick=()=>dl(`fahrten_${r.user}_${r.month}.csv`,['Datum;Fahrzeug;km Start;km Ende;km;Von;Nach;Zweck;Getankt;Liter'].concat(r.trips.map(t=>[d2(t.s)+' '+t2(t.s),cs(t.veh),t.kmS,t.kmE,Math.max(0,t.kmE-t.kmS),cs(t.from),cs(t.to),cs(t.purpose),t.fuel?'ja':'',t.liters?String(t.liters).replace('.',','):''].join(';'))));
 }
-if(!inGoogle&&!DEFAULT_URL){$('lurl').style.display='block';$('lurl').value=lsGet('url')||DEFAULT_URL}
+if(!inGoogle){$('lurl').value=lsGet('url')||DEFAULT_URL;$('lurl').style.display='block';const t=document.createElement('a');t.textContent='Verbindung testen (muss {"status":"ok"…} zeigen)';t.target='_blank';t.rel='noopener';t.style.cssText='display:block;margin-top:10px;font-size:13px';t.onclick=()=>{t.href=$('lurl').value.trim()||DEFAULT_URL};$('le').before(t)}else $('lurl').style.display='none'
 if(token){$('login').style.display='none';start()}else $('login').style.display='block';
 </script></body></html>
