@@ -17,7 +17,7 @@ button.pri{background:var(--sig);color:var(--sigink)}button.ghost{background:var
 .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:.01em}.brand i{width:14px;height:14px;border-radius:50%;background:var(--sig);box-shadow:0 0 0 4px rgba(255,196,0,.25)}.brand span{color:var(--sig)}
 .tabs{display:flex;gap:2px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
 .tabs button{background:transparent;color:#C9D1DB;padding:8px 11px;border-radius:9px;white-space:nowrap}.tabs button.on{background:var(--sig);color:#11161C}.tabs button:not(.on):hover{background:rgba(255,255,255,.1)}
-.right{display:flex;align-items:center;gap:8px}.top .chip{background:rgba(255,255,255,.12);color:#fff}.top button.ghost{background:rgba(255,255,255,.12);color:#fff}
+.right{display:flex;align-items:center;gap:8px;margin-left:auto}.top .chip{background:rgba(255,255,255,.12);color:#fff}.top button.ghost{background:rgba(255,255,255,.12);color:#fff}
 main{max-width:1080px;margin:0 auto;padding:18px 16px 80px}
 .card{background:var(--card);border-radius:var(--r);padding:18px;margin:0 0 16px;box-shadow:var(--shadow);border:1px solid var(--line)}
 .card>h3{margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.card>h3 small{font-weight:500;font-size:13px}
@@ -51,10 +51,22 @@ main{max-width:1080px;margin:0 auto;padding:18px 16px 80px}
 .lcard details{margin-top:12px;font-size:13px;color:var(--mut)}.lcard summary{cursor:pointer}.err{color:var(--bad);font-size:13.5px;margin:12px 0 0;line-height:1.4}
 .pw{position:relative}.pw button{position:absolute;right:5px;top:15px;padding:5px 9px;background:transparent;color:var(--mut);font-size:13px}
 .note{background:rgba(255,196,0,.18);border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:14px}
-@media(max-width:1060px){.right .chip{display:none}}
+@media(max-width:1200px){.right .chip{display:none}.tabs{order:3;flex-basis:100%}}
 @media(max-width:640px){.top{padding:8px 12px;gap:8px}.tabs{order:3;flex-basis:100%}.right .chip{display:none}main{padding:14px 12px 80px}.kpi b{font-size:24px}}
+
+/* ---- Politur v7.4 ---- */
+.tabs button{display:inline-flex;align-items:center;gap:7px}.ti{width:17px;height:17px;flex:none}
+tbody tr:nth-child(even) td{background:rgba(127,140,160,.06)}tbody tr:hover td{background:rgba(255,196,0,.10)}
+.card>h3{font-size:17px}
+.emp{position:relative;overflow:hidden}.emp.live::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--sig)}
+.kpi{position:relative;overflow:hidden}.kpi::after{content:"";position:absolute;right:-18px;top:-18px;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle,rgba(255,196,0,.22),transparent 70%)}.kpi.sig::after{display:none}
+.dial{width:78px;height:78px;margin:0 auto 10px;display:block}
+.lcard{text-align:center}.lcard input,.lcard details,.lcard .err{text-align:left}.lcard .brand{justify-content:center}
+main{animation:vin .25s ease}@keyframes vin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(max-width:640px){.tabs button span{font-size:13px}.tabs button{padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){main{animation:none}}
 </style></head><body>
-<div id="login" hidden><div class="lcard"><div class="brand"><i></i>Stempeluhr <span>Admin</span></div><small>Anmelden mit deinem Benutzerkonto</small>
+<div id="login" hidden><div class="lcard"><svg class="dial" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#11161C"/><circle cx="50" cy="50" r="36" fill="none" stroke="#2a313c" stroke-width="7" stroke-dasharray="1.6 2.6"/><circle cx="50" cy="50" r="36" fill="none" stroke="#FFC400" stroke-width="7" stroke-dasharray="1.6 2.6" pathLength="100" style="stroke-dasharray:1.6 2.6" transform="rotate(-90 50 50)" stroke-dashoffset="0" clip-path="inset(0 0 55% 0)"/><path d="M50 50V30M50 50l12 7" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="50" r="4" fill="#FFC400"/></svg><div class="brand"><i></i>Stempeluhr <span>Admin</span></div><small>Anmelden mit deinem Benutzerkonto</small>
 <input id="lu" placeholder="Benutzername" autocomplete="username" autocapitalize="off"><div class="pw"><input id="lp" type="password" placeholder="Passwort" autocomplete="current-password"><button type="button" id="lpv" class="ghost">zeigen</button></div>
 <button class="pri" id="lb">Anmelden</button><p class="err" id="le"></p>
 <details id="conn"><summary>Verbindung (Google-Skript-URL)</summary><input id="lurl" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" spellcheck="false"><a id="lt" target="_blank" rel="noopener" style="display:block;margin-top:8px">Verbindung testen – muss {"status":"ok"…} zeigen</a></details></div></div>
@@ -98,10 +110,12 @@ $('lb').onclick=async()=>{$('le').textContent='';if(!inGoogle)lsSet('url',($('lu
 ['lp','lu'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')$('lb').click()}));
 $('theme').onclick=()=>{const cur=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');const n=cur==='dark'?'light':'dark';document.documentElement.dataset.theme=n;lsSet('theme',n)};
 if(lsGet('theme'))document.documentElement.dataset.theme=lsGet('theme');
+const ICON={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .6 3.2 2.2 3.5 5"/>',tasks:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 12l2.5 2.5L16 9"/>',msgs:'<path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',veh:'<path d="M3 15v-4l2-5h14l2 5v4M3 15h18M3 15v3h3v-3m12 0v3h3v-3"/><circle cx="7.5" cy="12.5" r=".8"/><circle cx="16.5" cy="12.5" r=".8"/>',sys:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
+const ic=k=>`<svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]||''}</svg>`;
 const TABS=[['home','Übersicht'],['users','Benutzer'],['tasks','Aufgaben'],['msgs','Nachrichten'],['veh','Fahrzeuge']];
 function start(){$('login').hidden=true;$('app').hidden=false;$('who').textContent=ss.get('who')||'';
   const tabs=TABS.concat(role==='dev'?[['sys','System']]:[]);
-  $('tabs').innerHTML=tabs.map(([k,l])=>`<button data-t="${k}" class="${tab===k&&!cur?'on':''}">${l}</button>`).join('');
+  $('tabs').innerHTML=tabs.map(([k,l])=>`<button data-t="${k}" class="${tab===k&&!cur?'on':''}">${ic(k)}<span>${l}</span></button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;cur=null;q='';start()});
   render();clearInterval(timer);timer=setInterval(()=>{if(tab==='home'&&!cur&&!document.hidden&&!document.activeElement.matches('input,select'))render(true)},60000)}
 const me=()=>ss.get('me')||'';
@@ -117,8 +131,8 @@ async function home(v){
   const r=await api('overview',{month});const rows=r.rows.filter(o=>!q||(o.name+' '+o.user).toLowerCase().includes(q.toLowerCase()));const liveN=r.rows.filter(o=>o.live).length;
   v.innerHTML=`<div class="head"><h2>Übersicht</h2><div class="mnav"><button data-m="-1">‹</button><b>${esc(mlabel(r.month))}</b><button data-m="1">›</button></div></div>
   <div class="kpis"><div class="kpi sig"><small>Jetzt eingestempelt</small><b>${liveN}<span style="font-size:15px;font-weight:600"> / ${r.rows.length}</span></b></div><div class="kpi"><small>Stunden heute</small><b>${hm(sum(r.rows,'today'))}</b></div><div class="kpi"><small>Stunden Monat</small><b>${hm(sum(r.rows,'month'))}</b></div><div class="kpi"><small>km Monat</small><b>${sum(r.rows,'km').toLocaleString('de-DE')}</b></div><div class="kpi"><small>Offene Aufgaben</small><b>${sum(r.rows,'tasks')}</b></div></div>
-  <div class="row" style="margin-bottom:12px"><input id="sq" class="grow" placeholder="Person suchen …" value="${esc(q)}"><a href="${esc(r.sheetUrl)}" target="_blank" rel="noopener">Google Sheet öffnen ↗</a><button class="ghost sm" id="rl">Log-Blätter aktualisieren</button></div>
-  ${rows.length?`<div class="grid">${rows.map(o=>`<div class="emp ${o.live?'live':''}" data-u="${esc(o.user)}"><div class="emp-h"><div class="av">${esc(init(o.name))}</div><div style="min-width:0"><b>${esc(o.name)}</b><small>${esc(RL[o.role]||o.role)}</small></div></div>
+  <div class="row" style="margin-bottom:12px"><input id="sq" class="grow" placeholder="Person suchen …" value="${esc(q)}">${r.sheetUrl?`<a href="${esc(r.sheetUrl)}" target="_blank" rel="noopener">Google Sheet öffnen ↗</a>`:''}<button class="ghost sm" id="rl">Log-Blätter aktualisieren</button></div>
+  ${rows.length?`<div class="grid">${rows.map(o=>`<div class="emp ${o.live?'live':''}" data-u="${esc(o.user)}"><div class="emp-h"><div class="av">${esc(init(o.name))}</div><div style="min-width:0"><b>${esc(o.name)}</b><small>${esc(RL[o.role]||o.role)}${o.cars&&o.cars.length?' · 🚐 '+esc(o.cars.join(', ')):''}</small></div></div>
   <div class="st ${o.live?'on':''}"><span class="pulse"></span>${esc(o.status)}${o.trip?' · Fahrzeug '+esc(o.trip):''}</div>
   <div class="nums"><div><small>Heute</small><b>${hm(o.today)}</b></div><div><small>Monat</small><b>${hm(o.month)}</b></div><div><small>km</small><b>${o.km.toLocaleString('de-DE')}</b></div></div>
   <div class="foot"><span>Sync ${rel(o.sync)}</span><span>${o.tasks?o.tasks+' Aufgabe'+(o.tasks>1?'n':'')+' offen':'keine Aufgaben'}</span></div></div>`).join('')}</div>`:`<div class="card empty"><big>🔍</big>Keine Person gefunden.</div>`}`;
@@ -129,7 +143,7 @@ async function home(v){
 }
 async function users(v){
   const r=await api('users');
-  v.innerHTML=`<div class="head"><h2>Benutzer</h2></div><div class="card">${r.users.map(u=>`<div class="urow ${u.active?'':'off'}"><div class="av">${esc(init(u.name))}</div><div class="who"><b><a data-u="${esc(u.user)}">${esc(u.name)}</a></b><small>${esc(u.user)} · Sync ${rel(u.sync)}</small></div>${rchip(u.role)}${u.active?'':'<span class="chip bad">gesperrt</span>'}
+  v.innerHTML=`<div class="head"><h2>Benutzer</h2></div><div class="card">${r.users.map(u=>`<div class="urow ${u.active?'':'off'}"><div class="av">${esc(init(u.name))}</div><div class="who"><b><a data-u="${esc(u.user)}">${esc(u.name)}</a></b><small>${esc(u.user)} · Sync ${rel(u.sync)}${u.cars&&u.cars.length?' · 🚐 '+esc(u.cars.join(', ')):''}</small></div>${rchip(u.role)}${u.active?'':'<span class="chip bad">gesperrt</span>'}
   <div class="row"><input type="password" placeholder="neues Passwort" style="width:150px" data-pw="${esc(u.user)}"><button class="ghost sm" data-set="${esc(u.user)}">Setzen</button>${u.user===me()?'':`<button class="ghost sm" data-tg="${esc(u.user)}">${u.active?'Sperren':'Entsperren'}</button>${role==='dev'?`<select data-rs="${esc(u.user)}">${Object.keys(r.roles).map(k=>`<option value="${k}" ${k===u.role?'selected':''}>${esc(r.roles[k])}</option>`).join('')}</select><button class="ghost sm" data-rb="${esc(u.user)}">Rolle ändern</button>`:''}`}</div></div>`).join('')}</div>
   <div class="card"><h3>Neuer ${role==='dev'?'Benutzer':'Mitarbeiter'}</h3><div class="row"><input id="nn" class="grow" placeholder="Anzeigename"><input id="nu" class="grow" placeholder="Benutzername (a-z, 0-9)" autocapitalize="off"><input id="np" class="grow" type="password" placeholder="Passwort (min. 8)">${role==='dev'?`<select id="nr"><option value="user">Mitarbeiter</option><option value="admin">Admin</option><option value="dev">Entwickler</option></select>`:''}<button class="pri" id="nb">Anlegen</button></div></div>`;
   v.querySelectorAll('[data-u]').forEach(a=>a.onclick=()=>{cur=a.dataset.u;sub='z';start()});
@@ -155,16 +169,19 @@ async function msgs(v){
 const days=d=>d?Math.floor((new Date(d+'T00:00:00')-new Date(new Date().toDateString()))/864e5):null;
 const due=d=>{if(!d)return'<span class="mut">–</span>';const n=days(d),l=new Date(d+'T00:00:00').toLocaleDateString('de-DE');return n<0?`<span class="chip bad">${l} · überfällig</span>`:n<=30?`<span class="chip warn">${l} · in ${n} Tg.</span>`:`<span class="chip ok">${l}</span>`};
 async function vehicles(v){
-  const r=await api('vehicles'),soon=r.vehicles.filter(x=>[x.tuev,x.service].some(d=>d&&days(d)<=30));
+  const r=await api('vehicles'),pn=Object.fromEntries((r.people||[]).map(x=>[x.user,x.name])),soon=r.vehicles.filter(x=>[x.tuev,x.service].some(d=>d&&days(d)<=30));
   v.innerHTML=`<div class="head"><h2>Fahrzeuge</h2></div>${soon.length?`<div class="note">Fristen fällig oder bald fällig: <b>${esc(soon.map(x=>x.plate).join(', '))}</b></div>`:''}
   <div class="grid">${r.vehicles.map(x=>`<div class="card" style="margin:0"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(x.plate)}</h3><small>${esc(x.name)||'–'}</small></div>${x.l100!=null?`<span class="chip">${String(x.l100).replace('.',',')} l/100 km</span>`:'<span class="chip">Verbrauch –</span>'}</div>
-  <div style="margin:12px 0 4px"><small>TÜV</small> ${due(x.tuev)}</div><div><small>Service</small> ${due(x.service)}</div>
+  <div style="margin:10px 0 4px"><small>Fahrer</small> ${(x.drivers||[]).length?x.drivers.map(d=>`<span class="chip adm">${esc(pn[d]||d)}</span>`).join(' '):'<span class="chip">niemand zugeordnet</span>'}</div>
+  <div style="margin:4px 0"><small>TÜV</small> ${due(x.tuev)}</div><div><small>Service</small> ${due(x.service)}</div>
+  <details style="margin-top:10px"><summary class="mut" style="cursor:pointer;font-size:13px">Fahrer zuweisen</summary><div class="row" style="margin-top:8px;gap:6px 14px">${(r.people||[]).map(pp=>`<label class="row" style="gap:5px"><input type="checkbox" data-dr="${esc(x.plate)}" value="${esc(pp.user)}" ${(x.drivers||[]).includes(pp.user)?'checked':''}> ${esc(pp.name)}</label>`).join('')||'<small>Keine Mitarbeiter.</small>'}</div></details>
   <div class="row" style="margin-top:12px"><input type="date" value="${esc(x.tuev)}" data-tv="${esc(x.plate)}" title="TÜV"><input type="date" value="${esc(x.service)}" data-sv="${esc(x.plate)}" title="Service"></div>
   <div class="row" style="margin-top:8px"><button class="ghost sm" data-vs="${esc(x.plate)}" data-n="${esc(x.name)}">Speichern</button><button class="ghost sm" data-vd="${esc(x.plate)}">Löschen</button></div></div>`).join('')||'<div class="card empty" style="grid-column:1/-1"><big>🚐</big>Noch keine Fahrzeuge.</div>'}</div>
-  <div class="card" style="margin-top:16px"><h3>Fahrzeug anlegen</h3><div class="row"><input id="vp" placeholder="Kennzeichen" maxlength="20"><input id="vn" class="grow" placeholder="Bezeichnung" maxlength="60"><label class="row" style="gap:6px"><small>TÜV</small><input id="vt" type="date"></label><label class="row" style="gap:6px"><small>Service</small><input id="vsv" type="date"></label><button class="pri" id="vb">Anlegen</button></div><p class="mut" style="font-size:13px;margin:10px 0 0">Verbrauch = Näherung aus den Tankungen (Volltanken angenommen, mind. 2 Tankungen). Fahrzeuge erscheinen in der App als Auswahl; Fristen ≤ 30 Tage werden dort angezeigt.</p></div>`;
-  v.querySelectorAll('[data-vs]').forEach(b=>b.onclick=()=>act('vehSave',{plate:b.dataset.vs,name:b.dataset.n,tuev:v.querySelector(`[data-tv="${b.dataset.vs}"]`).value,service:v.querySelector(`[data-sv="${b.dataset.vs}"]`).value}));
+  <div class="card" style="margin-top:16px"><h3>Fahrzeug anlegen</h3><div class="row"><input id="vp" placeholder="Kennzeichen" maxlength="20"><input id="vn" class="grow" placeholder="Bezeichnung" maxlength="60"><label class="row" style="gap:6px"><small>TÜV</small><input id="vt" type="date"></label><label class="row" style="gap:6px"><small>Service</small><input id="vsv" type="date"></label><button class="pri" id="vb">Anlegen</button></div>
+  <details style="margin-top:10px"><summary class="mut" style="cursor:pointer;font-size:13px">Fahrer zuweisen (optional)</summary><div class="row" style="margin-top:8px;gap:6px 14px">${(r.people||[]).map(pp=>`<label class="row" style="gap:5px"><input type="checkbox" data-dr="__new" value="${esc(pp.user)}"> ${esc(pp.name)}</label>`).join('')}</div></details><p class="mut" style="font-size:13px;margin:10px 0 0">Verbrauch = Näherung aus den Tankungen (Volltanken angenommen, mind. 2 Tankungen). Zugeordnete Fahrer sehen ihr Fahrzeug in der App vorausgewählt (ohne Zuordnung erscheinen alle). Fristen ≤ 30 Tage werden dort angezeigt.</p></div>`;
+  v.querySelectorAll('[data-vs]').forEach(b=>b.onclick=()=>act('vehSave',{plate:b.dataset.vs,name:b.dataset.n,tuev:v.querySelector(`[data-tv="${b.dataset.vs}"]`).value,service:v.querySelector(`[data-sv="${b.dataset.vs}"]`).value,drivers:[...v.querySelectorAll(`[data-dr="${b.dataset.vs}"]:checked`)].map(c=>c.value)}));
   v.querySelectorAll('[data-vd]').forEach(b=>b.onclick=async()=>{if(await ask('Fahrzeug löschen?',b.dataset.vd,'Löschen',true))act('vehDel',{plate:b.dataset.vd})});
-  $('vb').onclick=()=>act('vehSave',{plate:$('vp').value,name:$('vn').value,tuev:$('vt').value,service:$('vsv').value});
+  $('vb').onclick=()=>act('vehSave',{plate:$('vp').value,name:$('vn').value,tuev:$('vt').value,service:$('vsv').value,drivers:[...v.querySelectorAll('[data-dr="__new"]:checked')].map(c=>c.value)});
 }
 async function system(v){
   const [b,a]=await Promise.all([api('backups'),api('activity')]);
