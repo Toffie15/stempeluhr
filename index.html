@@ -79,7 +79,43 @@ main{animation:vin .25s ease}@keyframes vin{from{opacity:0;transform:translateY(
 .badge{background:var(--bad);color:#fff;border-radius:99px;font-size:11px;padding:1px 6px;margin-left:2px}
 img.ph{max-width:100%;border-radius:12px;margin-top:10px}
 .tl{display:flex;gap:8px;flex-wrap:wrap}
-</style></head><body>
+
+/* ---- v7.8: neues Design (Seitenleiste, weichere Flächen, Ladebalken) ---- */
+:root{--r:16px;--shadow:0 1px 2px rgba(17,22,28,.05),0 6px 20px rgba(17,22,28,.05)}
+body{background:radial-gradient(1200px 500px at 85% -10%,rgba(255,196,0,.10),transparent 60%),var(--bg);background-attachment:fixed}
+#prog{position:fixed;left:0;top:0;height:3px;width:0;background:var(--sig);z-index:70;opacity:0;pointer-events:none;box-shadow:0 0 8px rgba(255,196,0,.7)}
+#prog.on{opacity:1;width:82%;transition:width 6s cubic-bezier(.1,.7,.2,1)}
+#prog.done{opacity:0;width:100%;transition:width .15s,opacity .35s .15s}
+.head h2{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.card{border-radius:18px;padding:20px}
+.card>h3{font-size:16.5px;font-weight:750}
+button.pri{box-shadow:0 2px 0 rgba(0,0,0,.12)}button.pri:hover{filter:brightness(1.05)}
+button.ghost:hover{filter:brightness(.97)}
+input,select,textarea{border-radius:11px}
+.kpi{border-radius:18px;padding:16px 18px}.kpi b{font-size:30px;letter-spacing:-.02em}
+.kpi.sig{background:linear-gradient(135deg,#FFD23F,#FFB800)}
+.emp,.lvc{border-radius:18px}.emp:hover{box-shadow:0 10px 28px rgba(17,22,28,.12)}
+.av{background:linear-gradient(145deg,#1B222C,#0D1117)}
+.tw{border-radius:14px}thead th{position:sticky;top:0;background:var(--card);font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);z-index:1}
+.urow{padding:14px 0}
+.chip{font-weight:650}
+.modal>div{border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.top{background:linear-gradient(180deg,#151B23,#0D1117)}
+.tabs button{border-radius:11px;transition:background .15s,color .15s}
+.tabs button.on{box-shadow:0 4px 14px rgba(255,196,0,.35)}
+@media(min-width:900px){
+ .top{position:fixed;left:0;top:0;bottom:0;width:240px;flex-direction:column;align-items:stretch;flex-wrap:nowrap;padding:20px 12px 16px;gap:14px;overflow-y:auto;box-shadow:2px 0 24px rgba(0,0,0,.18)}
+ .brand{padding:0 8px;font-size:19px}
+ .tabs{order:0;flex-direction:column;flex:1 1 auto;flex-basis:auto;flex-wrap:nowrap;overflow:visible;gap:3px}
+ .tabs button{width:100%;justify-content:flex-start;padding:10px 12px;font-size:14.5px}
+ .tabs button .badge{margin-left:auto}
+ .right{margin:0;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:14px}
+ .right .chip{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+ #app main{margin-left:240px;max-width:none;padding:30px 36px 80px}
+ #view{max-width:1140px;margin:0 auto}
+}
+@media(max-width:899px){.top .brand span{display:none}}
+</style></head><body><div id="prog"></div>
 <div id="login" hidden><div class="lcard"><svg class="dial" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#11161C"/><circle cx="50" cy="50" r="36" fill="none" stroke="#2a313c" stroke-width="7" stroke-dasharray="1.6 2.6"/><circle cx="50" cy="50" r="36" fill="none" stroke="#FFC400" stroke-width="7" stroke-dasharray="1.6 2.6" pathLength="100" style="stroke-dasharray:1.6 2.6" transform="rotate(-90 50 50)" stroke-dashoffset="0" clip-path="inset(0 0 55% 0)"/><path d="M50 50V30M50 50l12 7" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="50" r="4" fill="#FFC400"/></svg><div class="brand"><i></i>Stempeluhr <span>Admin</span></div><div id="lform"><small>Anmelden mit deinem Benutzerkonto</small>
 <input id="lu" placeholder="Benutzername" autocomplete="username" autocapitalize="off"><div class="pw"><input id="lp" type="password" placeholder="Passwort" autocomplete="current-password"><button type="button" id="lpv" class="ghost">zeigen</button></div>
 <button class="pri" id="lb">Anmelden</button><p class="err" id="le"></p></div><div id="mustbox" hidden><p class="note" style="text-align:left;margin-top:14px">Willkommen! Bitte lege jetzt dein <b>eigenes Passwort</b> fest (mindestens 8 Zeichen). Danach geht es direkt weiter.</p><div class="pw"><input id="mo" type="password" placeholder="Bisheriges (vom Admin erhaltenes) Passwort" autocomplete="current-password"></div><input id="mn1" type="password" placeholder="Neues Passwort" autocomplete="new-password"><input id="mn2" type="password" placeholder="Neues Passwort wiederholen" autocomplete="new-password"><button class="pri" id="mgo">Passwort speichern</button><p class="err" id="me2"></p><a id="mcancel" style="display:block;margin-top:12px;font-size:13px">Abbrechen / abmelden</a></div>
@@ -92,7 +128,7 @@ img.ph{max-width:100%;border-radius:12px;margin-top:10px}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let mem={}; const ss={get:k=>{try{return sessionStorage.getItem(k)}catch(e){return mem[k]||null}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch(e){mem[k]=v}},del:k=>{try{sessionStorage.removeItem(k)}catch(e){delete mem[k]}}};
-const DEFAULT_URL='https://script.google.com/macros/s/AKfycbx-mLtbNor5MF6-Hk9MEslokPstzwOer8qZbdkCHmLd3b7t1Uxm0eJ18kl_wXX9bQntOQ/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
+const DEFAULT_URL='https://script.google.com/macros/s/AKfycbxrYmu-DuZcMM8SYMnpixbI9Qya9C3PdCd34y-gb4rCdVaqtY2X_kqnLVYUbDkhg_fd9Q/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
 const inGoogle=!!(window.google&&google.script&&google.script.run);
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return mem['ls'+k]||null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){mem['ls'+k]=v}};
 function remote(fn,a){
@@ -120,9 +156,14 @@ function form(title,fields,okLabel,note,extra){return new Promise(res=>{const b=
   $('mn').onclick=()=>{b.innerHTML='';res(null)};$('my').onclick=()=>{const o=get();b.innerHTML='';res(o)};if($('mx'))$('mx').onclick=()=>{const o=get();b.innerHTML='';o.__x=1;res(o)};const f=b.querySelector('[data-k]');if(f)f.focus()})}
 function box(title,html){const b=$('modalbox');b.innerHTML=`<div class="modal"><div class="wide"><h3>${esc(title)}</h3>${html}<div class="row"><button class="pri" id="mc">Schließen</button></div></div></div>`;$('mc').onclick=()=>{b.innerHTML=''}}
 const skel=n=>Array.from({length:n},()=>'<div class="sk"></div>').join('');
-async function api(a,p){const r=await run('adminApi',token,a,p||{});if(!r.ok){if(r.code===401){logout(true);throw new Error(r.msg||'Bitte neu anmelden.')}if(r.code===402){showMust();throw new Error(r.msg)}throw new Error(r.msg||'Fehler')}return r}
+const READ=new Set(['users','groups','tickets','requests','vehicles','vehFile','userView','tasks','stats','sessions','planList','overview','messages','live','health','gaps','flags','errors','devices','corrections','approvals','activity','backups']);
+const cache=new Map();let cmode=false,rseq=0;
+async function api(a,p){const k=READ.has(a)?a+JSON.stringify(p||{}):null;
+  if(cmode){if(k&&cache.has(k))return cache.get(k);throw new Error('MISS')}
+  const r=await run('adminApi',token,a,p||{});if(r.ok){if(k)cache.set(k,r);else cache.clear()}
+  if(!r.ok){if(r.code===401){logout(true);throw new Error(r.msg||'Bitte neu anmelden.')}if(r.code===402){showMust();throw new Error(r.msg)}throw new Error(r.msg||'Fehler')}return r}
 async function act(a,p,after){try{const r=await api(a,p);toast(r.msg||'Gespeichert');(after||render)();return r}catch(e){toast(e.message,true)}}
-function logout(silent){if(token)run('adminLogout',token).catch(()=>{});ss.del('tok');token=null;clearInterval(timer);$('app').hidden=true;$('login').hidden=false;$('lform').hidden=false;$('mustbox').hidden=true;if(silent)$('le').textContent='Sitzung abgelaufen – bitte neu anmelden.'}
+function logout(silent){cache.clear();window.__pf=0;if(token)run('adminLogout',token).catch(()=>{});ss.del('tok');token=null;clearInterval(timer);$('app').hidden=true;$('login').hidden=false;$('lform').hidden=false;$('mustbox').hidden=true;if(silent)$('le').textContent='Sitzung abgelaufen – bitte neu anmelden.'}
 function showMust(){clearInterval(timer);$('app').hidden=true;$('login').hidden=false;$('lform').hidden=true;$('mustbox').hidden=false;$('me2').textContent=''}
 $('out').onclick=()=>logout();
 $('mcancel').onclick=()=>logout();
@@ -145,21 +186,37 @@ function start(){$('login').hidden=true;$('app').hidden=false;$('who').textConte
   const tabs=TABS.concat(role==='dev'?[['sys','System']]:[]);
   $('tabs').innerHTML=tabs.map(([k,l])=>`<button data-t="${k}" class="${tab===k&&!cur&&!vcur?'on':''}">${ic(k)}<span>${l}</span>${badges[k]?`<em class="badge">${badges[k]}</em>`:''}</button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;cur=null;vcur=null;q='';start()});
-  render();clearInterval(timer);timer=setInterval(()=>{if(!document.hidden&&!document.activeElement.matches('input,select,textarea')&&!$('modalbox').innerHTML&&!cur&&!vcur&&(tab==='home'||tab==='live'))render(true)},tab==='live'?30000:60000)}
+  render().then(()=>{if(!window.__pf&&token){window.__pf=1;prefetch()}});clearInterval(timer);timer=setInterval(()=>{if(!document.hidden&&!document.activeElement.matches('input,select,textarea')&&!$('modalbox').innerHTML&&!cur&&!vcur&&(tab==='home'||tab==='live'))render(true)},tab==='live'?30000:60000)}
 const me=()=>ss.get('me')||'';
 const sum=(a,k)=>a.reduce((s,x)=>s+(x[k]||0),0);
 const empty=(i,t)=>`<div class="empty"><big>${i}</big>${t}</div>`;
 async function opts(withGroups){const [u,g]=await Promise.all([api('users'),withGroups?api('groups'):Promise.resolve({groups:[]})]);return {users:u.users,groups:g.groups,html:(sel)=>`<option value="all">Alle Mitarbeiter</option>${g.groups.map(x=>`<option value="group:${esc(x.name)}">Gruppe: ${esc(x.name)} (${x.members.length})</option>`).join('')}${u.users.filter(x=>x.active).map(x=>`<option value="${esc(x.user)}">${esc(x.name)}${x.role!=='user'?' ('+esc(RL[x.role])+')':''}</option>`).join('')}`}}
-async function render(quiet){
-  const v=$('view');if(!quiet)v.innerHTML=skel(3);
-  try{
-    if(cur)return await renderUser();
-    if(vcur)return await vehFile(v);
-    const f={home,live,users,grp,tasks,msgs,req,plan,veh:vehicles,stat,gap,corr,sup,sys:system}[tab];if(f)await f(v);
-    refreshBadges();
-  }catch(e){if(token)v.innerHTML=`<div class="card empty"><big>⚠️</big>${esc(e.message)}<div class="row" style="justify-content:center;margin-top:12px"><button class="pri" onclick="render()">Erneut versuchen</button></div></div>`}
+const prog=on=>{const e=$('prog');if(!e)return;if(on){e.className='';void e.offsetWidth;e.className='on'}else{e.className='done'}};
+async function draw(v){
+  if(cur)return await renderUser();
+  if(vcur)return await vehFile(v);
+  const f={home,live,users,grp,tasks,msgs,req,plan,veh:vehicles,stat,gap,corr,sup,sys:system}[tab];if(f)await f(v);
 }
-async function refreshBadges(){try{const [a,b]=await Promise.all([api('requests',{status:'offen'}),api('tickets')]);const n1=a.reqs.length,n2=b.rows.filter(x=>x.status==='offen').length;if(badges.req!==n1||badges.sup!==n2){badges={req:n1,sup:n2};document.querySelectorAll('#tabs button').forEach(bt=>{const k=bt.dataset.t,e=bt.querySelector('.badge');if(e)e.remove();if(badges[k])bt.insertAdjacentHTML('beforeend',`<em class="badge">${badges[k]}</em>`)})}}catch(e){}}
+async function render(quiet){
+  const v=$('view'),my=++rseq;let shown=false;
+  if(!quiet&&cache.size){cmode=true;try{await draw(v);shown=true}catch(e){}finally{cmode=false}}
+  if(!quiet&&!shown)v.innerHTML=skel(3);
+  if(shown&&v.contains(document.activeElement)&&document.activeElement.matches('input,select,textarea'))return;
+  if(my!==rseq)return;
+  prog(true);
+  try{
+    await draw(v);
+    if(my===rseq)refreshBadges();
+  }catch(e){if(token&&my===rseq)v.innerHTML=`<div class="card empty"><big>⚠️</big>${esc(e.message)}<div class="row" style="justify-content:center;margin-top:12px"><button class="pri" onclick="render()">Erneut versuchen</button></div></div>`}
+  finally{if(my===rseq)prog(false)}
+}
+// Hintergrund-Vorladen: Tabs öffnen danach sofort
+async function prefetch(){
+  const L=[['overview',{month}],['live'],['users'],['groups'],['tasks'],['messages'],['requests',{status:'offen'}],['tickets'],['vehicles'],['planList'],['stats',{months:statN}],['gaps',{days:gapN}],['corrections'],['approvals'],['activity']];
+  let i=0;const w=async()=>{while(i<L.length){const [a,p]=L[i++];if(!token)return;try{const r=await run('adminApi',token,a,p||{});if(r.ok)cache.set(a+JSON.stringify(p||{}),r)}catch(e){}}};
+  await Promise.all([w(),w(),w()]);
+}
+let lastBadge=0;async function refreshBadges(){if(Date.now()-lastBadge<60000)return;lastBadge=Date.now();try{const [a,b]=await Promise.all([api('requests',{status:'offen'}),api('tickets')]);const n1=a.reqs.length,n2=b.rows.filter(x=>x.status==='offen').length;if(badges.req!==n1||badges.sup!==n2){badges={req:n1,sup:n2};document.querySelectorAll('#tabs button').forEach(bt=>{const k=bt.dataset.t,e=bt.querySelector('.badge');if(e)e.remove();if(badges[k])bt.insertAdjacentHTML('beforeend',`<em class="badge">${badges[k]}</em>`)})}}catch(e){}}
 async function home(v){
   const r=await api('overview',{month});const rows=r.rows.filter(o=>!q||(o.name+' '+o.user).toLowerCase().includes(q.toLowerCase()));const liveN=r.rows.filter(o=>o.live).length;
   v.innerHTML=`<div class="head"><h2>Übersicht</h2><div class="mnav"><button data-m="-1">‹</button><b>${esc(mlabel(r.month))}</b><button data-m="1">›</button></div></div>
