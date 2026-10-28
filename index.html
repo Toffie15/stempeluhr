@@ -128,7 +128,7 @@ input,select,textarea{border-radius:11px}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let mem={}; const ss={get:k=>{try{return sessionStorage.getItem(k)}catch(e){return mem[k]||null}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch(e){mem[k]=v}},del:k=>{try{sessionStorage.removeItem(k)}catch(e){delete mem[k]}}};
-const DEFAULT_URL='https://script.google.com/macros/s/AKfycbw8rLLnZDoOl48pH2cw_4BxPvyh6YFQoGV3WhVkK74a3t4mhv4xOihmMBXZqRhW-e5szQ/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
+const DEFAULT_URL='https://script.google.com/macros/s/AKfycbzH9pCHW1N-CO1JhPHsWXrLikqCM-Nq4UBXtnkZyWakS0nfjFPkV_10AIbnBI1kIdoeDQ/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
 const inGoogle=!!(window.google&&google.script&&google.script.run);
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return mem['ls'+k]||null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){mem['ls'+k]=v}};
 function remote(fn,a){
@@ -163,7 +163,7 @@ async function api(a,p){const k=READ.has(a)?a+JSON.stringify(p||{}):null;
   const r=await run('adminApi',token,a,p||{});if(r.ok){if(k)cache.set(k,r);else cache.clear()}
   if(!r.ok){if(r.code===401){logout(true);throw new Error(r.msg||'Bitte neu anmelden.')}if(r.code===402){showMust();throw new Error(r.msg)}throw new Error(r.msg||'Fehler')}return r}
 async function act(a,p,after){try{const r=await api(a,p);toast(r.msg||'Gespeichert');(after||render)();return r}catch(e){toast(e.message,true)}}
-function logout(silent){cache.clear();window.__pf=0;if(token)run('adminLogout',token).catch(()=>{});ss.del('tok');token=null;clearInterval(timer);$('app').hidden=true;$('login').hidden=false;$('lform').hidden=false;$('mustbox').hidden=true;if(silent)$('le').textContent='Sitzung abgelaufen – bitte neu anmelden.'}
+function logout(silent){cache.clear();P=null;window.__pf=0;if(token)run('adminLogout',token).catch(()=>{});ss.del('tok');token=null;clearInterval(timer);$('app').hidden=true;$('login').hidden=false;$('lform').hidden=false;$('mustbox').hidden=true;if(silent)$('le').textContent='Sitzung abgelaufen – bitte neu anmelden.'}
 function showMust(){clearInterval(timer);$('app').hidden=true;$('login').hidden=false;$('lform').hidden=true;$('mustbox').hidden=false;$('me2').textContent=''}
 $('out').onclick=()=>logout();
 $('mcancel').onclick=()=>logout();
@@ -181,9 +181,17 @@ if(lsGet('theme'))document.documentElement.dataset.theme=lsGet('theme');
 const ICON={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',live:'<circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 0 0 0 11.4M17.7 6.3a8 8 0 0 1 0 11.4M3.5 3.5a12 12 0 0 0 0 17M20.5 3.5a12 12 0 0 1 0 17"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .6 3.2 2.2 3.5 5"/>',grp:'<circle cx="8" cy="9" r="2.6"/><circle cx="16.5" cy="9" r="2.6"/><path d="M3 19c.5-3 2.4-4.4 5-4.4s4.5 1.4 5 4.4M13.5 15c.9-.3 1.9-.4 3-.4 2.6 0 4 1.4 4.5 4.4"/>',tasks:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 12l2.5 2.5L16 9"/>',msgs:'<path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',req:'<path d="M5 3v18M5 4h12l-2.5 4L17 12H5"/>',plan:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',veh:'<path d="M3 15v-4l2-5h14l2 5v4M3 15h18M3 15v3h3v-3m12 0v3h3v-3"/><circle cx="7.5" cy="12.5" r=".8"/><circle cx="16.5" cy="12.5" r=".8"/>',stat:'<path d="M5 20V10M12 20V4M19 20v-7"/>',gap:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',corr:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',sup:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.3"/>',sys:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
 const ic=k=>`<svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]||''}</svg>`;
 const TABS=[['home','Übersicht'],['live','Live'],['users','Benutzer'],['grp','Gruppen'],['tasks','Aufgaben'],['msgs','Nachrichten'],['veh','Fahrzeuge'],['stat','Auswertung'],['gap','Lücken'],['corr','Korrekturen'],['sup','Support']];
-let badges={};
+let badges={},P=null;
+const canDo=k=>role==='dev'||!P||!(P.off||[]).includes(k);
+const TAB_PERM={home:'home',live:'live',users:'users',grp:'groups',tasks:'tasks',msgs:'msgs',veh:'veh',stat:'stats',gap:'stats',corr:'corr',sup:'support'};
+function applyPerms(v){if(role==='dev')return;const hide=(sel,k)=>{if(!canDo(k))v.querySelectorAll(sel).forEach(e=>{const c=e.closest('.card');if(e.dataset&&e.dataset.card&&c)c.hidden=true;else e.hidden=true})};
+  hide('#nb','create');if(!canDo('create')){const c=$('nb')&&$('nb').closest('.card');if(c)c.hidden=true}
+  hide('[data-pw],[data-set]','pw');hide('[data-tg]','lock');hide('[data-del]','delete');hide('#ne,[data-ee],#ap,#ua','times');
+  if(!canDo('cfg')){const c=$('cg')&&$('cg').closest('.card');if(c)c.hidden=true}
+  if(!canDo('groups'))v.querySelectorAll('[data-ge],[data-gd],#gb').forEach(e=>e.hidden=true)}
 function start(){$('login').hidden=true;$('app').hidden=false;$('who').textContent=ss.get('who')||'';
-  const tabs=TABS.concat(role==='dev'?[['sys','System']]:[]);
+  if(role!=='dev'&&!P){P={off:[]};api('myPerms').then(x=>{P=x;if(token)start()}).catch(()=>{})}
+  const tabs=TABS.filter(t=>canDo(TAB_PERM[t[0]]||'')).concat(role==='dev'?[['sys','System']]:[]);if(tabs.length&&!tabs.some(t=>t[0]===tab)&&!cur&&!vcur)tab=tabs[0][0];
   $('tabs').innerHTML=tabs.map(([k,l])=>`<button data-t="${k}" class="${tab===k&&!cur&&!vcur?'on':''}">${ic(k)}<span>${l}</span>${badges[k]?`<em class="badge">${badges[k]}</em>`:''}</button>`).join('');
   $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;cur=null;vcur=null;q='';start()});
   render().then(()=>{if(!window.__pf&&token){window.__pf=1;prefetch()}});clearInterval(timer);timer=setInterval(()=>{if(!document.hidden&&!document.activeElement.matches('input,select,textarea')&&!$('modalbox').innerHTML&&!cur&&!vcur&&(tab==='home'||tab==='live'))render(true)},tab==='live'?30000:60000)}
@@ -199,13 +207,13 @@ async function draw(v){
 }
 async function render(quiet){
   const v=$('view'),my=++rseq;let shown=false;
-  if(!quiet&&cache.size){cmode=true;try{await draw(v);shown=true}catch(e){}finally{cmode=false}}
+  if(!quiet&&cache.size){cmode=true;try{await draw(v);applyPerms(v);shown=true}catch(e){}finally{cmode=false}}
   if(!quiet&&!shown)v.innerHTML=skel(3);
   if(shown&&v.contains(document.activeElement)&&document.activeElement.matches('input,select,textarea'))return;
   if(my!==rseq)return;
   prog(true);
   try{
-    await draw(v);
+    await draw(v);applyPerms(v);
     if(my===rseq)refreshBadges();
   }catch(e){if(token&&my===rseq)v.innerHTML=`<div class="card empty"><big>⚠️</big>${esc(e.message)}<div class="row" style="justify-content:center;margin-top:12px"><button class="pri" onclick="render()">Erneut versuchen</button></div></div>`}
   finally{if(my===rseq)prog(false)}
@@ -382,6 +390,7 @@ async function renderUser(){
   <label class="fl" style="margin-top:10px"><small>Tätigkeiten (eine pro Zeile · leer = Standardliste der App)</small><textarea id="ca" rows="4" placeholder="Fahrt&#10;Be-/Entladen&#10;Büro">${esc((u.acts||[]).join('\n'))}</textarea></label>
   <div class="row" style="margin-top:10px"><button class="pri" id="cb">Einstellungen speichern</button>${grpOf.length?`<span class="mut" style="font-size:13px">Gruppen: ${grpOf.map(esc).join(', ')}</span>`:''}</div></div>
   ${role==='dev'?`<div class="card"><h3>Rechte <small>was ${esc(r.name)} in der App sehen darf</small></h3><div>${Object.keys(r.flagDefs||{}).map(k=>`<label class="chk"><input type="checkbox" data-rk="${k}" ${(r.off||[]).includes(k)?'':'checked'}>${esc(r.flagDefs[k])}</label>`).join('')}</div><div class="row" style="margin-top:10px"><button class="pri" id="rb">Rechte speichern</button><span class="mut" style="font-size:13px">Haken weg = Funktion ist für diese Person ausgeblendet. Gilt zusätzlich zu den Rollen-Schaltern unter System.</span></div></div>`:''}
+  ${role==='dev'&&r.role!=='dev'?`<div class="card"><h3>Zugriff auf die Admin-Seite <small>${esc(r.name)}</small></h3><label class="fl" style="max-width:380px;margin-bottom:10px"><small>Anmeldung auf dieser Seite</small><select id="aw"><option value="" ${r.web?'':'selected'}>Standard (${r.webDefault?'erlaubt':'nicht erlaubt'})</option><option value="ja" ${r.web==='ja'?'selected':''}>Ja – darf sich anmelden</option><option value="nein" ${r.web==='nein'?'selected':''}>Nein – gesperrt</option></select></label><small class="mut">Sichtbare Bereiche und Funktionen:</small><div style="margin-top:4px">${Object.keys(r.adminPerms||{}).map(k=>`<label class="chk"><input type="checkbox" data-ap="${k}" ${(r.aoff||[]).includes(k)?'':'checked'}>${esc(r.adminPerms[k])}</label>`).join('')}</div><div class="row" style="margin-top:10px"><button class="pri" id="ab">Admin-Rechte speichern</button><span class="mut" style="font-size:13px">Haken weg = Bereich oder Funktion ist für diesen Admin gesperrt (Server prüft es auch).</span></div></div>`:''}
   <div class="card"><h3>Abwesenheiten <small>aus der App${r.vac?` · Urlaub ${r.vac.used} von ${r.vac.total} Tagen genommen, ${r.vac.left} übrig`:''}</small></h3>${(r.absences||[]).length?`<div class="tw"><table><thead><tr><th>Art</th><th>Von</th><th>Bis</th><th>Notiz</th></tr></thead><tbody>${r.absences.map(a=>`<tr><td>${esc(a.type)}</td><td>${esc(a.start.split('-').reverse().join('.'))}</td><td>${esc(a.end.split('-').reverse().join('.'))}</td><td>${esc(a.note)}</td></tr>`).join('')}</tbody></table></div>`:empty('🌴','Keine Abwesenheiten eingetragen.')}</div>
   <div class="kpis"><div class="kpi sig"><small>Netto-Stunden</small><b>${hm(tot)}</b></div><div class="kpi"><small>Arbeitstage</small><b>${dayset.size}</b></div><div class="kpi"><small>Ø pro Tag</small><b>${dayset.size?hm(tot/dayset.size):'0:00'}</b></div><div class="kpi"><small>Fahrten · km</small><b>${r.trips.length} · ${nf(km)}</b></div><div class="kpi"><small>Getankt</small><b>${lit?String(Math.round(lit*10)/10).replace('.',',')+' l':'–'}</b></div></div>
   <div class="row" style="margin-bottom:12px"><div class="seg"><button data-s="z" class="${sub==='z'?'on':''}">Zeiten (${r.entries.length})</button><button data-s="f" class="${sub==='f'?'on':''}">Fahrtenbuch (${r.trips.length})</button></div>${r.approved?`<span class="chip ok">Monat freigegeben von ${esc(r.approved.by)} · ${dt2(r.approved.at)}</span><button class="ghost sm" id="ua">Freigabe aufheben</button>`:`<button class="ghost sm" id="ap">Monat freigeben</button>`}<span class="grow"></span>${sub==='z'?'<button class="pri sm" id="ne">+ Zeit nachtragen</button>':''}<button class="ghost sm" id="csv">${sub==='z'?'Zeiten':'Fahrtenbuch'} als CSV</button></div>
@@ -393,6 +402,7 @@ async function renderUser(){
   v.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sub=b.dataset.s;render()});
   $('cb').onclick=async()=>{const a=await act('setCfg',{user:cur,goal:$('cg').value,acts:$('ca').value.split('\n')},()=>{});if(a){await act('setVacation',{user:cur,days:$('cv').value},render)}};
   if($('rb'))$('rb').onclick=()=>act('setRights',{user:cur,off:[...v.querySelectorAll('[data-rk]')].filter(c=>!c.checked).map(c=>c.dataset.rk)},()=>{});
+  if($('ab'))$('ab').onclick=()=>act('setAdminRights',{user:cur,web:$('aw').value,off:[...v.querySelectorAll('[data-ap]')].filter(c=>!c.checked).map(c=>c.dataset.ap)},()=>{});
   if($('ap'))$('ap').onclick=()=>act('approveMonth',{user:cur,month:r.month});
   if($('ua'))$('ua').onclick=()=>act('unapproveMonth',{user:cur,month:r.month});
   const editE=async(e)=>{const f=await form(e?'Zeit bearbeiten':'Zeit nachtragen',[{k:'date',l:'Datum',t:'date',v:e?iso(e.s):iso(Date.now())},{k:'pause',l:'Pause (Min.)',t:'number',v:e?Math.round(e.p/60000):0},{k:'from',l:'Start',t:'time',v:e?t2(e.s):'08:00'},{k:'to',l:'Ende',t:'time',v:e?t2(e.e):'16:00'},{k:'act',l:'Tätigkeit',v:e?e.act:'',ph:(u.acts||[]).slice(0,3).join(', ')},{k:'note',l:'Notiz',v:e?e.note:''},{k:'reason',l:'Grund der Änderung (Pflicht, wird protokolliert)',t:'textarea',rows:2,ph:'z. B. Ausstempeln vergessen'}],'Speichern','Die App der Person übernimmt die Änderung beim nächsten Abgleich. Ende nach Mitternacht: Datum und Ende bleiben am Starttag, max. 24 h.',e?'Löschen':null);
