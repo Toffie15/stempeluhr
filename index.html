@@ -127,6 +127,13 @@ input,select,textarea{border-radius:11px}
 .hint{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(127,140,160,.18)}.hint:last-child{border:0}
 .mbar{display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:8px}.mbar div{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;font-size:11px;color:var(--mut)}.mbar span{max-width:100%;overflow:hidden;white-space:nowrap;font-size:10px}.mbar i{width:100%;background:var(--sig);border-radius:6px 6px 0 0;min-height:2px}
 @media(max-width:899px){.gsw{order:2;flex:1 1 100%}}
+
+/* ---- Modern SaaS UI Polish ---- */
+.card{border-radius:20px;box-shadow:0 6px 28px rgba(0,0,0,.04);transition:box-shadow .2s ease,transform .2s ease}
+.card:hover{box-shadow:0 10px 36px rgba(0,0,0,.07)}
+.emp,.lvc{transition:transform .15s ease,box-shadow .15s ease}
+.emp:hover,.lvc:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.tabs button{transition:all .2s ease}
 </style></head><body><div id="prog"></div>
 <div id="login" hidden><div class="lcard"><svg class="dial" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#11161C"/><circle cx="50" cy="50" r="36" fill="none" stroke="#2a313c" stroke-width="7" stroke-dasharray="1.6 2.6"/><circle cx="50" cy="50" r="36" fill="none" stroke="#FFC400" stroke-width="7" stroke-dasharray="1.6 2.6" pathLength="100" style="stroke-dasharray:1.6 2.6" transform="rotate(-90 50 50)" stroke-dashoffset="0" clip-path="inset(0 0 55% 0)"/><path d="M50 50V30M50 50l12 7" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="50" r="4" fill="#FFC400"/></svg><div class="brand"><i></i>Stempeluhr <span>Admin</span></div><div id="lform"><small>Anmelden mit deinem Benutzerkonto</small>
 <input id="lu" placeholder="Benutzername" autocomplete="username" autocapitalize="off"><div class="pw"><input id="lp" type="password" placeholder="Passwort" autocomplete="current-password"><button type="button" id="lpv" class="ghost">zeigen</button></div>
