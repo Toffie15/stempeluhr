@@ -125,7 +125,7 @@ input,select,textarea{border-radius:11px}
 .cal td.we{background:rgba(127,140,160,.1)}.cal td.cd{border-left:1px solid rgba(127,140,160,.12)}
 .lg{display:inline-flex;align-items:center;gap:6px;margin-right:14px;font-size:13px}.lg i{width:14px;height:14px;border-radius:4px;display:inline-block}
 .hint{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(127,140,160,.18)}.hint:last-child{border:0}
-.mbar{display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:8px}.mbar div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;font-size:11px;color:var(--mut)}.mbar i{width:100%;background:var(--sig);border-radius:6px 6px 0 0;min-height:2px}
+.mbar{display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:8px}.mbar div{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;font-size:11px;color:var(--mut)}.mbar span{max-width:100%;overflow:hidden;white-space:nowrap;font-size:10px}.mbar i{width:100%;background:var(--sig);border-radius:6px 6px 0 0;min-height:2px}
 @media(max-width:899px){.gsw{order:2;flex:1 1 100%}}
 </style></head><body><div id="prog"></div>
 <div id="login" hidden><div class="lcard"><svg class="dial" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#11161C"/><circle cx="50" cy="50" r="36" fill="none" stroke="#2a313c" stroke-width="7" stroke-dasharray="1.6 2.6"/><circle cx="50" cy="50" r="36" fill="none" stroke="#FFC400" stroke-width="7" stroke-dasharray="1.6 2.6" pathLength="100" style="stroke-dasharray:1.6 2.6" transform="rotate(-90 50 50)" stroke-dashoffset="0" clip-path="inset(0 0 55% 0)"/><path d="M50 50V30M50 50l12 7" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="50" r="4" fill="#FFC400"/></svg><div class="brand"><i></i>Stempeluhr <span>Admin</span></div><div id="lform"><small>Anmelden mit deinem Benutzerkonto</small>
@@ -141,7 +141,7 @@ input,select,textarea{border-radius:11px}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let mem={}; const ss={get:k=>{try{return sessionStorage.getItem(k)}catch(e){return mem[k]||null}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch(e){mem[k]=v}},del:k=>{try{sessionStorage.removeItem(k)}catch(e){delete mem[k]}}};
-const DEFAULT_URL='https://script.google.com/macros/s/AKfycbwOatlrsOgiaDT7k47rWmND2vHYDIPvrP4Scv0HSWDfnUskpl6huq1hoSD7ymbjLnjTdA/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
+const DEFAULT_URL='https://script.google.com/macros/s/AKfycbyZLlGnXwdYMaHciIGmyRj4sqhB7kDJx-F_2x5x3m16aWO7LnHzwqhWhpfasWj4mL6rhg/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
 const inGoogle=!!(window.google&&google.script&&google.script.run);
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return mem['ls'+k]||null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){mem['ls'+k]=v}};
 function remote(fn,a){
@@ -169,7 +169,7 @@ function form(title,fields,okLabel,note,extra){return new Promise(res=>{const b=
   $('mn').onclick=()=>{b.innerHTML='';res(null)};$('my').onclick=()=>{const o=get();b.innerHTML='';res(o)};if($('mx'))$('mx').onclick=()=>{const o=get();b.innerHTML='';o.__x=1;res(o)};const f=b.querySelector('[data-k]');if(f)f.focus()})}
 function box(title,html){const b=$('modalbox');b.innerHTML=`<div class="modal"><div class="wide"><h3>${esc(title)}</h3>${html}<div class="row"><button class="pri" id="mc">Schließen</button></div></div></div>`;$('mc').onclick=()=>{b.innerHTML=''}}
 const skel=n=>Array.from({length:n},()=>'<div class="sk"></div>').join('');
-const READ=new Set(['trends','logbook','absList','monthReport','vehCosts','tplList','userLog','users','groups','tickets','vehicles','vehFile','userView','tasks','stats','sessions','overview','messages','live','health','gaps','flags','errors','devices','corrections','approvals','activity','backups']);
+const READ=new Set(['inbox','custList','trends','logbook','absList','monthReport','vehCosts','tplList','userLog','users','groups','tickets','vehicles','vehFile','userView','tasks','stats','sessions','overview','messages','live','health','gaps','flags','errors','devices','corrections','approvals','activity','backups']);
 const cache=new Map();let cmode=false,rseq=0;
 async function api(a,p){const k=READ.has(a)?a+JSON.stringify(p||{}):null;
   if(cmode){if(k&&cache.has(k))return cache.get(k);throw new Error('MISS')}
@@ -198,12 +198,12 @@ $('tc').addEventListener('keydown',e=>{if(e.key==='Enter')$('tgo').click()});
 ['mo','mn1','mn2'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')$('mgo').click()}));
 $('theme').onclick=()=>{const cur=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');const n=cur==='dark'?'light':'dark';document.documentElement.dataset.theme=n;lsSet('theme',n)};
 if(lsGet('theme'))document.documentElement.dataset.theme=lsGet('theme');
-const ICON={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',live:'<circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 0 0 0 11.4M17.7 6.3a8 8 0 0 1 0 11.4M3.5 3.5a12 12 0 0 0 0 17M20.5 3.5a12 12 0 0 1 0 17"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .6 3.2 2.2 3.5 5"/>',grp:'<circle cx="8" cy="9" r="2.6"/><circle cx="16.5" cy="9" r="2.6"/><path d="M3 19c.5-3 2.4-4.4 5-4.4s4.5 1.4 5 4.4M13.5 15c.9-.3 1.9-.4 3-.4 2.6 0 4 1.4 4.5 4.4"/>',tasks:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 12l2.5 2.5L16 9"/>',msgs:'<path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',req:'<path d="M5 3v18M5 4h12l-2.5 4L17 12H5"/>',plan:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',veh:'<path d="M3 15v-4l2-5h14l2 5v4M3 15h18M3 15v3h3v-3m12 0v3h3v-3"/><circle cx="7.5" cy="12.5" r=".8"/><circle cx="16.5" cy="12.5" r=".8"/>',trend:'<path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',stat:'<path d="M5 20V10M12 20V4M19 20v-7"/>',gap:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',corr:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',sup:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.3"/>',sys:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
+const ICON={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',live:'<circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 0 0 0 11.4M17.7 6.3a8 8 0 0 1 0 11.4M3.5 3.5a12 12 0 0 0 0 17M20.5 3.5a12 12 0 0 1 0 17"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-5.5 6.5-5.5s5.9 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .6 3.2 2.2 3.5 5"/>',grp:'<circle cx="8" cy="9" r="2.6"/><circle cx="16.5" cy="9" r="2.6"/><path d="M3 19c.5-3 2.4-4.4 5-4.4s4.5 1.4 5 4.4M13.5 15c.9-.3 1.9-.4 3-.4 2.6 0 4 1.4 4.5 4.4"/>',tasks:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 12l2.5 2.5L16 9"/>',msgs:'<path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',req:'<path d="M5 3v18M5 4h12l-2.5 4L17 12H5"/>',plan:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',veh:'<path d="M3 15v-4l2-5h14l2 5v4M3 15h18M3 15v3h3v-3m12 0v3h3v-3"/><circle cx="7.5" cy="12.5" r=".8"/><circle cx="16.5" cy="12.5" r=".8"/>',inbox:'<path d="M4 13l4 4L20 6"/>',cust:'<path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',trend:'<path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',stat:'<path d="M5 20V10M12 20V4M19 20v-7"/>',gap:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',corr:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',sup:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.3"/>',sys:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
 const ic=k=>`<svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]||''}</svg>`;
-const TABS=[['home','Übersicht'],['live','Live'],['users','Benutzer'],['grp','Gruppen'],['tasks','Aufgaben'],['msgs','Nachrichten'],['veh','Fahrzeuge'],['stat','Auswertung'],['cal','Kalender'],['trend','Trends'],['gap','Lücken'],['corr','Korrekturen'],['sup','Support']];
+const TABS=[['home','Übersicht'],['live','Live'],['inbox','Genehmigungen'],['users','Benutzer'],['grp','Gruppen'],['tasks','Aufgaben'],['msgs','Nachrichten'],['veh','Fahrzeuge'],['stat','Auswertung'],['cal','Kalender'],['trend','Trends'],['cust','Kunden'],['gap','Lücken'],['corr','Korrekturen'],['sup','Support']];
 let badges={},P=null;
 const canDo=k=>role==='dev'||!P||!(P.off||[]).includes(k);
-const TAB_PERM={trend:'stats',cal:'stats',home:'home',live:'live',users:'users',grp:'groups',tasks:'tasks',msgs:'msgs',veh:'veh',stat:'stats',gap:'stats',corr:'corr',sup:'support'};
+const TAB_PERM={inbox:'abs',cust:'cust',trend:'stats',cal:'stats',home:'home',live:'live',users:'users',grp:'groups',tasks:'tasks',msgs:'msgs',veh:'veh',stat:'stats',gap:'stats',corr:'corr',sup:'support'};
 function applyPerms(v){if(role==='dev')return;const hide=(sel,k)=>{if(!canDo(k))v.querySelectorAll(sel).forEach(e=>{const c=e.closest('.card');if(e.dataset&&e.dataset.card&&c)c.hidden=true;else e.hidden=true})};
   hide('#nb','create');if(!canDo('create')){const c=$('nb')&&$('nb').closest('.card');if(c)c.hidden=true}
   hide('[data-pw],[data-set]','pw');hide('[data-tg]','lock');hide('[data-del]','delete');hide('#ne,[data-ee],#ap,#ua','times');
@@ -223,7 +223,7 @@ const prog=on=>{const e=$('prog');if(!e)return;if(on){e.className='';void e.offs
 async function draw(v){
   if(cur)return await renderUser();
   if(vcur)return await vehFile(v);
-  const f={home,live,users,grp,tasks,msgs,veh:vehicles,stat,cal,trend,gap,corr,sup,sys:system}[tab];if(f)await f(v);
+  const f={home,inbox,cust,live,users,grp,tasks,msgs,veh:vehicles,stat,cal,trend,gap,corr,sup,sys:system}[tab];if(f)await f(v);
 }
 async function render(quiet){
   const v=$('view'),my=++rseq;let shown=false;
@@ -553,11 +553,34 @@ async function tplUI(v,type,get,set){
   }catch(e){}
 }
 
+/* ===== Genehmigungs-Zentrale, Kunden ===== */
+async function inbox(v){
+  const r=await api('inbox'),n=r.abs.length+r.months.length;
+  v.innerHTML=`<div class="head"><h2>Genehmigungen</h2><span class="chip ${n?'warn':'ok'}">${n?n+' offen':'alles erledigt'}</span></div>
+  <div class="card"><h3>Urlaub &amp; Abwesenheit <small>${r.abs.length} offen</small></h3>${r.abs.length?`<div class="tw"><table><thead><tr><th>Person</th><th>Art</th><th>Von</th><th>Bis</th><th>Notiz</th><th></th></tr></thead><tbody>${r.abs.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.type)}</td><td>${esc(x.start)}</td><td>${esc(x.end)}</td><td>${esc(x.note)}</td><td style="white-space:nowrap"><button class="pri sm" data-ay="${i}">Bestätigen</button> <button class="ghost sm" data-an="${i}">Ablehnen</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="mut" style="margin:0">Keine offenen Anträge.</p>'}</div>
+  <div class="card"><h3>Monatsfreigabe <small>${esc(mlabel(r.month))}</small></h3>${r.months.length?`<div class="tw"><table><thead><tr><th>Person</th><th>Tage</th><th>Ist</th><th>Soll</th><th>Differenz</th><th></th></tr></thead><tbody>${r.months.map((x,i)=>`<tr><td><a href="#" data-u="${esc(x.user)}">${esc(x.name)}</a></td><td>${x.days}</td><td>${dec(x.ist)}</td><td>${dec(x.soll)}</td><td>${dec(x.diff)}</td><td><button class="pri sm" data-mf="${i}">Freigeben</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="mut" style="margin:0">Alle Monate mit Zeiten sind freigegeben.</p>'}</div>
+  ${r.tickets?`<div class="card"><h3>Support</h3><p style="margin:0 0 10px">${r.tickets} offene Anfrage${r.tickets>1?'n':''}</p><button class="ghost sm" id="gsup">Zum Support</button></div>`:''}`;
+  v.querySelectorAll('[data-ay]').forEach(b=>b.onclick=()=>{const x=r.abs[b.dataset.ay];act('absDecide',{user:x.user,start:x.start,end:x.end,type:x.type,status:'bestätigt'})});
+  v.querySelectorAll('[data-an]').forEach(b=>b.onclick=async()=>{const x=r.abs[b.dataset.an];if(await ask('Antrag ablehnen?',x.name+' · '+x.type+' '+x.start+' – '+x.end,'Ablehnen',true))act('absDecide',{user:x.user,start:x.start,end:x.end,type:x.type,status:'abgelehnt'})});
+  v.querySelectorAll('[data-mf]').forEach(b=>b.onclick=()=>{const x=r.months[b.dataset.mf];act('approveMonth',{user:x.user,month:x.month})});
+  v.querySelectorAll('a[data-u]').forEach(a=>a.onclick=e=>{e.preventDefault();cur=a.dataset.u;sub='z';start()});
+  if($('gsup'))$('gsup').onclick=()=>{const b=document.querySelector('#tabs [data-t=sup]');if(b)b.click()};
+}
+async function cust(v){
+  const r=await api('custList');
+  v.innerHTML=`<div class="head"><h2>Kunden &amp; Ziele</h2><button class="pri" id="cn">+ Neu</button></div>
+  <div class="card"><p class="mut" style="margin-top:0">Diese Orte erscheinen den Fahrern im Fahrtenbuch als Vorschlag bei Start- und Zielort. Bei Standort-Teams sieht jeder nur die Einträge seines Standorts und die ohne Standort.</p>${r.rows.length?`<div class="tw"><table><thead><tr><th>Name</th><th>Adresse</th>${role==='dev'?'<th>Standort</th>':''}<th></th></tr></thead><tbody>${r.rows.map((x,i)=>`<tr><td>${esc(x.name)}</td><td>${esc(x.addr)}</td>${role==='dev'?`<td>${esc(x.site)||'<span class="mut">alle</span>'}</td>`:''}<td style="white-space:nowrap"><button class="ghost sm" data-ce="${i}">Bearbeiten</button> <button class="ghost sm" data-cd="${i}">Löschen</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="mut" style="margin:0">Noch keine Einträge.</p>'}</div>`;
+  const edit=async x=>{const f=await form(x?'Kunde bearbeiten':'Neuer Kunde / Ort',[{k:'name',l:'Name',full:true,v:x?x.name:''},{k:'addr',l:'Adresse (optional)',full:true,v:x?x.addr:''}].concat(role==='dev'?[{k:'site',l:'Standort (leer = für alle)',full:true,v:x?x.site:''}]:[]),'Speichern');if(f&&f.name.trim())act('custSave',Object.assign({id:x?x.id:undefined},f))};
+  $('cn').onclick=()=>edit(null);
+  v.querySelectorAll('[data-ce]').forEach(b=>b.onclick=()=>edit(r.rows[b.dataset.ce]));
+  v.querySelectorAll('[data-cd]').forEach(b=>b.onclick=async()=>{const x=r.rows[b.dataset.cd];if(await ask('Eintrag löschen?',x.name,'Löschen',true))act('custDel',{id:x.id})});
+}
+
 /* ===== Trends, Fahrtenbuch-PDF ===== */
 let trN=12;
 async function trend(v){
   const r=await api('trends',{months:trN}),M=r.months,L=M.map(x=>x.m);
-  const bars=(vals,f,col)=>{const mx=Math.max(1e-9,...vals.map(x=>Math.abs(x||0)));return `<div class="mbar">${vals.map((x,i)=>`<div title="${esc(L[i])}: ${f(x)}"><span>${f(x)}</span><i style="height:${Math.abs(x||0)/mx*90}px;${x<0?'background:var(--bad)':col?'background:'+col:''}"></i><span>${esc(L[i].slice(2).replace('-','/'))}</span></div>`).join('')}</div>`};
+  const bars=(vals,f,col)=>{const mx=Math.max(1e-9,...vals.map(x=>Math.abs(x||0)));return `<div class="mbar">${vals.map((x,i)=>`<div title="${esc(L[i])}: ${f(x)}"><span>${f(x)}</span><i style="height:${Math.abs(x||0)/mx*90}px;${x<0?'background:var(--bad)':col?'background:'+col:''}"></i><span>${esc(L[i].slice(5))}</span></div>`).join('')}</div>`};
   const n0=x=>x==null?'–':nf(Math.round(x)),e2=x=>x==null?'–':Number(x).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
   const last=M[M.length-1]||{},sumOt=M.reduce((a,x)=>a+x.ot,0);
   v.innerHTML=`<div class="head"><h2>Trends</h2><div class="seg">${[6,12,24].map(n=>`<button data-n="${n}" class="${trN===n?'on':''}">${n} Monate</button>`).join('')}</div></div>
