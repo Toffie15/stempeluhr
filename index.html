@@ -139,7 +139,14 @@ input,select,textarea{border-radius:11px}
 <input id="lu" placeholder="Benutzername" autocomplete="username" autocapitalize="off"><div class="pw"><input id="lp" type="password" placeholder="Passwort" autocomplete="current-password"><button type="button" id="lpv" class="ghost">zeigen</button></div>
 <button class="pri" id="lb">Anmelden</button><p class="err" id="le"></p></div><div id="tfabox" hidden><p class="note" style="text-align:left;margin-top:14px">Wir haben einen <b>6-stelligen Code</b> an <b id="tfah"></b> gesendet. Er gilt 10 Minuten.</p><input id="tc" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Code"><div class="row" style="margin-top:10px"><button class="ghost" id="tcancel">Abbrechen</button><button class="pri" id="tgo">Bestätigen</button></div><p class="err" id="te"></p></div>
 <div id="mustbox" hidden><p class="note" style="text-align:left;margin-top:14px">Willkommen! Bitte lege jetzt dein <b>eigenes Passwort</b> fest (mindestens 8 Zeichen). Danach geht es direkt weiter.</p><div class="pw"><input id="mo" type="password" placeholder="Bisheriges (vom Admin erhaltenes) Passwort" autocomplete="current-password"></div><input id="mn1" type="password" placeholder="Neues Passwort" autocomplete="new-password"><input id="mn2" type="password" placeholder="Neues Passwort wiederholen" autocomplete="new-password"><button class="pri" id="mgo">Passwort speichern</button><p class="err" id="me2"></p><a id="mcancel" style="display:block;margin-top:12px;font-size:13px">Abbrechen / abmelden</a></div>
-<details id="conn"><summary>Verbindung (Google-Skript-URL)</summary><input id="lurl" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" spellcheck="false"><a id="lt" target="_blank" rel="noopener" style="display:block;margin-top:8px">Verbindung testen – muss {"status":"ok"…} zeigen</a></details></div></div>
+<div id="connBox" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px">
+  <label class="fl"><small>Google-Skript-URL</small></label>
+  <input id="lurl" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" spellcheck="false" style="width:100%;margin-top:4px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+    <a id="lt" target="_blank" rel="noopener" style="font-size:12.5px">Verbindung testen</a>
+    <small class="mut" style="font-size:11.5px">Automatisch verbunden</small>
+  </div>
+</div></div></div>
 <div id="app" hidden>
 <header class="top"><div class="brand"><i></i>Stempeluhr <span>Admin</span></div><div class="gsw"><input id="gs" placeholder="Suchen …  ( / )" autocomplete="off"><div class="gres" id="gres" hidden></div></div><nav class="tabs" id="tabs"></nav><div class="right"><span class="chip" id="who"></span><button class="ghost sm" id="theme" title="Hell/Dunkel wechseln">Design</button><button class="ghost sm" id="out">Abmelden</button></div></header>
 <main><div id="view"></div></main></div>
@@ -148,7 +155,7 @@ input,select,textarea{border-radius:11px}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let mem={}; const ss={get:k=>{try{return sessionStorage.getItem(k)}catch(e){return mem[k]||null}},set:(k,v)=>{try{sessionStorage.setItem(k,v)}catch(e){mem[k]=v}},del:k=>{try{sessionStorage.removeItem(k)}catch(e){delete mem[k]}}};
-const DEFAULT_URL='https://script.google.com/macros/s/AKfycbzBKS-Hz2guJuK4lSAZ8yxaJp42052WnvYEe_N-zVPrb_FAq9nRTZbiKrPHTLqjk65kaQ/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
+const DEFAULT_URL='https://script.google.com/macros/s/AKfycbxZIeyqOVAqClFvOoWh_1CZu1siTHkhOjA8G_47wzfVwGnUv-_wv87DP1H5Vy-x2JVC6g/exec';   // optional: Web-App-URL fest eintragen (ohne Geheimnisse – die URL ist ohne Login nutzlos)
 const inGoogle=!!(window.google&&google.script&&google.script.run);
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return mem['ls'+k]||null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){mem['ls'+k]=v}};
 function remote(fn,a){
