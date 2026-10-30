@@ -159,7 +159,7 @@ const DEFAULT_URL='https://script.google.com/macros/s/AKfycbxiS3kTnWhtfQAlgUGs8a
 const inGoogle=!!(window.google&&google.script&&google.script.run);
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return mem['ls'+k]||null}},lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){mem['ls'+k]=v}};
 function remote(fn,a){
-  const url=($('lurl').value||lsGet('url')||DEFAULT_URL).trim();if(!/^https:\/\/script\.google(usercontent)?\.com\//.test(url))return Promise.reject(new Error('Bitte die Google-Skript-URL (https://script.google.com/…/exec) eintragen.'));
+  const url=(DEFAULT_URL||$('lurl').value||lsGet('url')||'').trim();if(!/^https:\/\/script\.google(usercontent)?\.com\//.test(url))return Promise.reject(new Error('Bitte die Google-Skript-URL (https://script.google.com/…/exec) eintragen.'));
   const body=fn==='adminLogin'?{action:'adminLogin',user:a[0],pass:a[1]}:fn==='adminLogin2'?{action:'adminLogin2',ch:a[0],code:a[1]}:fn==='adminApi'?{action:'adminApi',token:a[0],act:a[1],p:a[2]}:{action:'adminLogout',token:a[0]};
   return fetch(url,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(r=>r.json()).then(d=>{if(d.status!=='ok')throw new Error(d.message||'Fehler');return d.r}).catch(e=>{throw new Error(e.message==='Failed to fetch'?'Skript nicht erreichbar – prüfe: 1) URL endet auf /exec (nicht /dev), 2) Bereitstellung: Ausführen als „Ich“, Zugriff „Jeder“, 3) nach Code-Änderungen neue Version veröffentlichen. „Verbindung testen“ muss {"status":"ok"…} zeigen (sonst ist es eine Google-Anmeldeseite = Zugriff falsch).':e.message)});}
 const run=(fn,...a)=>inGoogle?new Promise((res,rej)=>google.script.run.withSuccessHandler(res).withFailureHandler(e=>rej(new Error(e&&e.message||e)))[fn](...a)):remote(fn,a);
@@ -200,11 +200,11 @@ $('lpv').onclick=()=>{const p=$('lp');p.type=p.type==='password'?'text':'passwor
 $('lt').onclick=()=>{$('lt').href=$('lurl').value.trim()||DEFAULT_URL};
 let tfaCh=null;
 function loginDone(r){token=r.token;role=r.role;ss.set('tok',token);ss.set('role',role);ss.set('me',r.user);ss.set('who',r.name+' · '+r.roleLabel);$('lp').value='';$('lform').hidden=false;$('tfabox').hidden=true;if(r.must){showMust();return}start()}
-$('lb').onclick=async()=>{$('le').textContent='';if(!inGoogle)lsSet('url',($('lurl').value||DEFAULT_URL).trim());$('lb').disabled=true;$('lb').textContent='Anmelden …';
+$('lb').onclick=async()=>{$('le').textContent='';if(!inGoogle&&!DEFAULT_URL)lsSet('url',$('lurl').value.trim());$('lb').disabled=true;$('lb').textContent='Anmelden …';
   try{const r=await run('adminLogin',$('lu').value.trim(),$('lp').value);if(!r.ok){$('le').textContent=r.msg;return}
     if(r.tfa){tfaCh=r.ch;$('tfah').textContent=r.hint;$('te').textContent='';$('tc').value='';$('lform').hidden=true;$('tfabox').hidden=false;$('tc').focus();return}
     loginDone(r)}
-  catch(e){$('le').textContent=e.message;if(/nicht erreichbar|URL/.test(e.message))$('conn').open=true}finally{$('lb').disabled=false;$('lb').textContent='Anmelden'}};
+  catch(e){$('le').textContent=e.message;if(!DEFAULT_URL&&/nicht erreichbar|URL/.test(e.message))$('connBox').hidden=false}finally{$('lb').disabled=false;$('lb').textContent='Anmelden'}};
 $('tgo').onclick=async()=>{$('te').textContent='';$('tgo').disabled=true;try{const r=await run('adminLogin2',tfaCh,$('tc').value.trim());if(!r.ok){$('te').textContent=r.msg;return}loginDone(r)}catch(e){$('te').textContent=e.message}finally{$('tgo').disabled=false}};
 $('tcancel').onclick=()=>{tfaCh=null;$('tfabox').hidden=true;$('lform').hidden=false;$('lp').value=''};
 $('tc').addEventListener('keydown',e=>{if(e.key==='Enter')$('tgo').click()});
@@ -653,6 +653,7 @@ async function logbookUI(u){
 }
 const dayMs=x=>new Date(x+'T12:00:00').getTime();
 
-if(!inGoogle){$('lurl').value=lsGet('url')||DEFAULT_URL}else $('conn').hidden=true;
+if(!inGoogle){$('lurl').value=DEFAULT_URL||lsGet('url')||''}
+if(inGoogle||DEFAULT_URL)$('connBox').hidden=true;
 if(token&&(inGoogle||lsGet('url')||DEFAULT_URL)){start()}else $('login').hidden=false;
 </script></body></html>
