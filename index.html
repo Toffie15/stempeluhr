@@ -204,10 +204,10 @@ const _cs=cache.set.bind(cache),_cc=cache.clear.bind(cache);let _pt=0;
 const pers=()=>{clearTimeout(_pt);_pt=setTimeout(()=>{try{const j=JSON.stringify([...cache]);if(j.length<2500000)ss.set('cache',j);else ss.del('cache')}catch(e){}},400)};
 cache.set=(k,v)=>{_cs(k,v);pers();return cache};cache.clear=()=>{_cc();pers()};
 try{const j=token&&ss.get('cache');if(j)JSON.parse(j).forEach(([k,v])=>_cs(k,v))}catch(e){}
-const bootKey=(a,m)=>a+JSON.stringify(a==='overview'?{month:m}:a==='stats'?{months:statN}:a==='gaps'?{days:gapN}:{});
+const bootKey=(a,m)=>a+JSON.stringify(a==='overview'?{month:m}:a==='stats'?{months:statN}:a==='gaps'?{days:gapN}:a==='trends'?{months:trN}:{});
 async function boot(set){
   try{const r=await run('adminApi',token,'boot',{set:set,month:month});if(!r||!r.ok||!r.parts)return;lastV=r.v||lastV;
-    Object.keys(r.parts).forEach(a=>{if(a==='stats'&&statN!==6)return;if(a==='gaps'&&gapN!==14)return;cache.set(bootKey(a,month),r.parts[a])})}catch(e){}
+    Object.keys(r.parts).forEach(a=>{if(a==='stats'&&statN!==6)return;if(a==='gaps'&&gapN!==14)return;if(a==='trends'&&trN!==12)return;cache.set(bootKey(a,month),r.parts[a])})}catch(e){}
 }
 async function api(a,p){const k=READ.has(a)?a+JSON.stringify(p||{}):null;
   if(cmode){if(k&&cache.has(k))return cache.get(k);throw new Error('MISS')}
