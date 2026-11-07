@@ -824,12 +824,12 @@ function logbookPrint(R,from,to){
   const r=R,T=r.trips,km=t=>Math.max(0,t.kmE-t.kmS),tot=T.reduce((a,t)=>a+km(t),0),vehs=[...new Set(T.map(t=>t.veh).filter(Boolean))];
   const art=p=>/^privat/i.test(p)?'P':/^arbeitsweg/i.test(p)?'A':'D',byArt={D:0,P:0,A:0};T.forEach(t=>{byArt[art(t.purpose)]+=km(t)});
   const k0=T.length?Math.min(...T.map(t=>t.kmS||Infinity)):0,k1=T.length?Math.max(...T.map(t=>t.kmE||0)):0,fuel=T.filter(t=>t.fuel).length;
-  const rows=T.map(t=>`<tr><td>${d2(t.s)}</td><td>${t2(t.s)}</td><td>${t.e?t2(t.e):''}</td><td class="c">${art(t.purpose)}</td>${r.vehicle?`<td>${esc(t.driver)}</td>`:''}<td class="n">${nf(t.kmS)}</td><td class="n">${nf(t.kmE)}</td><td class="n">${nf(km(t))}</td><td>${esc(t.from)}</td><td>${esc(t.to)}</td><td>${esc(t.note)}</td><td class="c">${t.fuel?'X':''}</td></tr>`).join('');
+  const nch=T.filter(t=>t.chg).length,ndel=r.dels||0;const rows=T.map(t=>`<tr><td>${d2(t.s)}${t.chg?'*':''}</td><td>${t2(t.s)}</td><td>${t.e?t2(t.e):''}</td><td class="c">${art(t.purpose)}</td>${r.vehicle?`<td>${esc(t.driver)}</td>`:''}<td class="n">${nf(t.kmS)}</td><td class="n">${nf(t.kmE)}</td><td class="n">${nf(km(t))}</td><td>${esc(t.from)}</td><td>${esc(t.to)}</td><td>${esc(t.note)}</td><td class="c">${t.fuel?'X':''}</td></tr>`).join('');
   const w=window.open('','_blank');if(!w){toast('Pop-ups erlauben, dann erneut versuchen.',true);return}
   w.document.write(`<!doctype html><meta charset="utf-8"><title>Fahrtenbuch ${esc(r.name)}</title><style>@page{size:A4 landscape;margin:10mm}body{font:11px system-ui,sans-serif;margin:0}h1{font-size:18px;margin:0 0 4px}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #888;padding:3px 5px;text-align:left;vertical-align:top}th{background:#eee}tr{break-inside:avoid}thead{display:table-header-group}.n{text-align:right;white-space:nowrap}.c{text-align:center;width:1%}.h{line-height:1.7}.sig{display:flex;gap:40px;margin-top:36px}.sig div{flex:1;border-top:1px solid #000;padding-top:4px}</style>
   <h1>Fahrtenbuch</h1><div class="h">${r.vehicle?'Fahrzeug':'Fahrer'}: <b>${esc(r.name)}</b> · Zeitraum: <b>${esc(d2(dayMs(from)))} – ${esc(d2(dayMs(to)))}</b> · ${r.vehicle?'':'Fahrzeug: <b>'+esc(vehs.join(', ')||'–')+'</b> · '}Km: <b>${T.length?'km Anfang: '+nf(k0)+' - km Ende: '+nf(k1):'–'}</b></div>
   <table><thead><tr><th>Datum</th><th>Beginn</th><th>Ende</th><th>Art</th>${r.vehicle?'<th>Fahrer</th>':''}<th>km Beginn</th><th>km Ende</th><th style="width:1%">Gefahrene<br>km</th><th>Startort</th><th>Zielort</th><th style="width:22%">Reisezweck</th><th>Getankt</th></tr></thead><tbody>${rows||`<tr><td colspan="${r.vehicle?12:11}">Keine Fahrten im Zeitraum.</td></tr>`}</tbody><tfoot><tr><th colspan="${r.vehicle?7:6}" style="text-align:right">Summe · ${T.length} Fahrt${T.length===1?'':'en'}</th><th class="n">${nf(tot)}</th><th colspan="3"></th><th class="c">${fuel?fuel+'×':''}</th></tr></tfoot></table>
-  <div style="margin-top:6px;color:#444">Art: D = Dienstlich${byArt.D?' ('+nf(byArt.D)+' km)':''} · P = Privat${byArt.P?' ('+nf(byArt.P)+' km)':''}${byArt.A?' · A = Arbeitsweg ('+nf(byArt.A)+' km)':''} · X = getankt</div>
+  <div style="margin-top:6px;color:#444">Art: D = Dienstlich${byArt.D?' ('+nf(byArt.D)+' km)':''} · P = Privat${byArt.P?' ('+nf(byArt.P)+' km)':''}${byArt.A?' · A = Arbeitsweg ('+nf(byArt.A)+' km)':''} · X = getankt</div>${nch||ndel?`<div style="margin-top:4px;color:#444">* = nachträglich vom Administrator geändert (${nch} Fahrt(en))${ndel?' · '+ndel+' Fahrt(en) vom Administrator gelöscht':''}. Die Änderungen sind mit Zeitpunkt und Grund protokolliert.</div>`:''}
   <div class="sig"><div>Ort, Datum</div><div>Unterschrift${r.vehicle?'':' Fahrer'}</div></div><p style="color:#666;margin-top:14px">Erstellt am ${d2(Date.now())} aus den Aufzeichnungen der Stempeluhr-App. Bitte mit dem Steuerberater abstimmen, ob die Angaben für Ihren Fall ausreichen.</p>`);
   w.document.close();w.focus();setTimeout(()=>w.print(),300);
 }
@@ -852,7 +852,7 @@ function timesPrint(r){
   const km=t=>Math.max(0,t.kmE-t.kmS),days={};
   r.entries.forEach(e=>{(days[iso(e.s)]=days[iso(e.s)]||{e:[],t:[]}).e.push(e)});r.trips.forEach(t=>{(days[iso(t.s)]=days[iso(t.s)]||{e:[],t:[]}).t.push(t)});
   let tot=0,tkm=0;const rows=[];
-  Object.keys(days).sort().forEach(k=>{const D=days[k],dk=D.t.reduce((a,t)=>a+km(t),0);tkm+=dk;
+  Object.keys(days).sort().forEach(k=>{const D=days[k],dk=D.t.reduce((a,t)=>a+(/^privat/i.test(t.purpose)?0:km(t)),0);tkm+=dk;
     const trip=D.t.map(t=>`<div>🚐 ${esc(t.from||'?')} → ${esc(t.to||'?')}${t.purpose==='Privat'?' (privat)':''}${t.note?': '+esc(t.note):''}</div>`).join('');
     const E=D.e.length?D.e:[null];
     E.forEach((e,i)=>{const n=e?Math.max(0,(e.e-e.s-e.p)/1000):0;tot+=n;
@@ -861,7 +861,7 @@ function timesPrint(r){
   w.document.write(`<!doctype html><meta charset="utf-8"><title>Zeiten ${esc(r.name)} ${esc(mon)}</title><style>@page{size:A4 portrait;margin:12mm}body{font:11px system-ui,sans-serif;margin:0}h1{font-size:18px;margin:0 0 6px}table{border-collapse:collapse;width:100%;margin-top:10px}th,td{border:1px solid #888;padding:3px 6px;text-align:left;vertical-align:top}th{background:#eee}tr{break-inside:avoid}thead{display:table-header-group}.n{text-align:right;white-space:nowrap}.h{font-size:13px;line-height:1.7}.sum{margin-top:14px;font-size:13px;line-height:1.8;border-top:2px solid #000;padding-top:8px}.sig{display:flex;gap:40px;margin-top:40px}.sig div{flex:1;border-top:1px solid #000;padding-top:4px}</style>
   <h1>Arbeitszeitnachweis</h1><div class="h">Monat: <b>${esc(mon)}</b> &nbsp;·&nbsp; Mitarbeiter: <b>${esc(r.name)}</b></div>
   <table><thead><tr><th>Datum</th><th>Von</th><th>Bis</th><th>Stunden</th><th>Tätigkeit / Mitfahrer / Grund der Fahrt</th><th>km</th></tr></thead><tbody>${rows.join('')||'<tr><td colspan="6">Keine Einträge in diesem Monat.</td></tr>'}</tbody></table>
-  <div class="sum">Gesamtstunden im Monat: <b>${hm(tot)} h</b> (${(tot/3600).toFixed(2).replace('.',',')} h)<br>Gesamt-km im Monat: <b>${nf(tkm)} km</b></div>
+  <div class="sum">Gesamtstunden im Monat: <b>${hm(tot)} h</b> (${(tot/3600).toFixed(2).replace('.',',')} h)<br>Gesamt-km im Monat: <b>${nf(tkm)} km</b> <small>(ohne Privatfahrten)</small></div>
   <div class="sig"><div>Ort, Datum</div><div>Unterschrift Mitarbeiter</div></div><p style="color:#666;margin-top:12px">Erstellt am ${d2(Date.now())} aus den Aufzeichnungen der Stempeluhr-App.</p>`);
   w.document.close();w.focus();setTimeout(()=>w.print(),300);
 }
